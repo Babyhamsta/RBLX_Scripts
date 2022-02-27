@@ -360,7 +360,7 @@ do
     end
     function utility.sameteam(player, p1)
         local p0 = p1 or locpl
-	print("Plr: " .. player .. " | TeamColor: " .. player.TeamColor);
+	print("[SameTeam Check]| Plr: " .. tostring(player) .. " | TeamColor: " .. tostring(player.TeamColor));
         return (player.TeamColor~=nil and player.TeamColor==p0.TeamColor)
     end
     function utility.getDistanceFromMouse(position)
@@ -1916,6 +1916,7 @@ do
                             local screenpos, onscreen = worldToViewportPoint(camera, root.Position)
                             local dist = utility.myroot and (utility.myroot.Position - root.Position).Magnitude
                             local isteam = (v.TeamColor~=nil and v.TeamColor==locpl.TeamColor)
+			    print("[IsTeam Check]| Plr: " .. tostring(v) .. " | IsTeam: " .. tostring(isteam));
 
                             if boxes.enabled then -- Profilebegin is life
                                 profilebegin("boxes.draw")

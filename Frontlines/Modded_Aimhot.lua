@@ -360,6 +360,7 @@ do
     end
     function utility.sameteam(player, p1)
         local p0 = p1 or locpl
+	print("Plr: " .. player .. " | TeamColor: " .. player.TeamColor);
         return (player.TeamColor~=nil and player.TeamColor==p0.TeamColor)
     end
     function utility.getDistanceFromMouse(position)

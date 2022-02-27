@@ -360,7 +360,7 @@ do
     end
     function utility.sameteam(player, p1)
         local p0 = p1 or locpl
-        return (player.TeamColor~=nil and player.TeamColor==p0.TeamColor) and player.Neutral == false or false
+        return (player.TeamColor~=nil and player.TeamColor==p0.TeamColor)
     end
     function utility.getDistanceFromMouse(position)
         local screenpos, vis = worldToViewportPoint(camera, position)
@@ -1914,7 +1914,7 @@ do
                         if root and isDescendantOf(character, game) == true then
                             local screenpos, onscreen = worldToViewportPoint(camera, root.Position)
                             local dist = utility.myroot and (utility.myroot.Position - root.Position).Magnitude
-                            local isteam = (v.TeamColor~=nil and v.TeamColor==locpl.TeamColor) and not v.Neutral or false
+                            local isteam = (v.TeamColor~=nil and v.TeamColor==locpl.TeamColor)
 
                             if boxes.enabled then -- Profilebegin is life
                                 profilebegin("boxes.draw")

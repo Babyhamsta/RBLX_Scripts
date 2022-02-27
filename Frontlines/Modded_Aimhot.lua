@@ -878,8 +878,8 @@ do
 
 	-- Do I want to make this decent?
 	local aimbot_settings = {}
-	aimbot_settings.ignoreteam = settings:Get("aimbot.ignoreteam", false)
-	aimbot_settings.sensitivity = settings:Get("aimbot.sensitivity", .22)
+	aimbot_settings.ignoreteam = settings:Get("aimbot.ignoreteam", true)
+	aimbot_settings.sensitivity = settings:Get("aimbot.sensitivity", .20)
 	aimbot_settings.locktotarget = settings:Get("aimbot.locktotarget", true)
 	aimbot_settings.checkifalive = settings:Get("aimbot.checkifalive", false)
 

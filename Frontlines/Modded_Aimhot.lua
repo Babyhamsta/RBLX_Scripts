@@ -14,6 +14,8 @@
    No Cam Shake
    No Recoil
    No Spread
+
+  -- Note from HamstaGang: Ty so much Stefanuk12 for helping with the debug functions. I still get confused on some of them.
 ]]
 
 -- Character Patch (Stefanuk12 | Modded by HamstaGang) [Fixes teams/teamcolor/ect]

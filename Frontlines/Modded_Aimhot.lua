@@ -884,7 +884,7 @@ do
 	aimbot_settings.checkifalive = settings:Get("aimbot.checkifalive", false)
 
 	aimbot_settings.ignorewalls = settings:Get("aimbot.ignorewalls", true)
-	aimbot_settings.maxobscuringparts = settings:Get("aimbot.maxobscuringparts", 0)
+	aimbot_settings.maxobscuringparts = settings:Get("aimbot.maxobscuringparts", 1)
 
 
 	aimbot_settings.enabled = settings:Get("aimbot.enabled", true)
@@ -892,7 +892,7 @@ do
 	aimbot_settings.presstoenable = settings:Get("aimbot.presstoenable", true)
 
 	aimbot_settings.fovsize = settings:Get("aimbot.fovsize", 400)
-	aimbot_settings.fovenabled = settings:Get("aimbot.fovenabled", true)
+	aimbot_settings.fovenabled = settings:Get("aimbot.fovenabled", false)
 	aimbot_settings.fovsides = settings:Get("aimbot.fovsides", 10)
 	aimbot_settings.fovthickness = settings:Get("aimbot.fovthickness", 1)
 

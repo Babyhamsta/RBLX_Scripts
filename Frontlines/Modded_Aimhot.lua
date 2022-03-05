@@ -18,7 +18,7 @@
   -- Note from HamstaGang: Ty so much Stefanuk12 for helping with the debug functions. I still get confused on some of them.
 ]]
 
--- Character Patch (Stefanuk12 | Modded by HamstaGang) [Fixes teams/teamcolor/ect] 
+-- Character Patch (Stefanuk12 | Modded by HamstaGang) [Fixes teams/teamcolor/ect]
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Stefanuk12/ROBLOX/master/Games/Frontlines/CharacterPatch.lua", true))()
 
 

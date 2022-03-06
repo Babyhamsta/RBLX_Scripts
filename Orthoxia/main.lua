@@ -5,6 +5,9 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyh
 local Plr = game:GetService("Players").LocalPlayer
 local Char = Plr.Character
 
+-- Remotes
+local CharRemote = Char.Remote
+
 -- Virtual Keyboard
 local virtualUser = game:GetService('VirtualUser')
 virtualUser:CaptureController()
@@ -26,6 +29,16 @@ function Setup_Zones()
     for i, Zone in pairs(Zones:GetChildren()) do
         table.insert(Zones_Arr, Zone.Name);
     end
+end
+
+-- Steal Drops (Credit: Fuu - https://v3rmillion.net/member.php?action=profile&uid=1262238)
+function stealDrop()
+   local store = game.ReplicatedStorage.Events.Storage
+   local drops = game:GetService("Workspace").Drops:GetChildren()
+   
+   if (#drops >= 1) then
+       store:InvokeServer(drops[1], "Store")
+   end
 end
 
 -- Teleport Bypass (Via Tween)
@@ -54,6 +67,21 @@ local GodMode = a:Button('God Mode', function()
     end)
 end)
 
+-- Infi Dash Button (Credit: Fuu - https://v3rmillion.net/member.php?action=profile&uid=1262238)
+local Infidash = a:Button('Infi Dash', function()
+    local InfiDashHook
+    InfiDashHook = hookmetamethod(game, "__namecall", newcclosure(function(...)
+        local args = {...}
+        local method = getnamecallmethod()
+       
+        if (args[1] == CharRemote and args[2] == 'Q' and method == "InvokeServer") then
+            return(true)
+        end
+       
+        return mt(...)
+    end))
+end)
+
 -- Collect Chests Button
 local ChestCollect = a:Button('Collect Chests', function()
     local Chests = game:GetService("Workspace").Chests:GetChildren()
@@ -68,6 +96,9 @@ local ChestCollect = a:Button('Collect Chests', function()
         end
     end
 end)
+
+-- Toggle Auto Collect / Steal drops
+local AutoStealDrops = farm:Toggle('Auto Collect Drops', {flag = "AutoStealDrops"})
 
 -- Credit Tag
 a:Section("Created by HamstaGang");
@@ -85,4 +116,13 @@ end)
 local ZoneTP = b:Button('Teleport to Zone', function()
     local Zones = game:GetService("Workspace").Map.Zones
     TP(Zones[Selected_Zone])
+end)
+
+-- Auto Steal / Collect Drops
+spawn(function()
+    while wait() do
+        if a.flags.AutoStealDrops then
+            stealDrop()
+        end
+    end
 end)

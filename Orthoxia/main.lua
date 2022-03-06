@@ -34,7 +34,9 @@ function stealDrop()
    local drops = game:GetService("Workspace").Drops:GetChildren()
    
    if (#drops >= 1) then
-       store:InvokeServer(drops[1], "Store")
+       if drops[1].Name ~= "GoldBag" then
+        store:InvokeServer(drops[1], "Store")
+       end
    end
 end
 

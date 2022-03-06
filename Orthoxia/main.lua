@@ -68,18 +68,16 @@ end)
 
 -- Infi Dash Button (Credit: Fuu - https://v3rmillion.net/member.php?action=profile&uid=1262238)
 local Infidash = a:Button('Infi Dash', function()
-    local CharRemote = Char:FindFirstChild("Remote")
-    
     local InfiDashHook
-    InfiDashHook = hookmetamethod(game, "__namecall", newcclosure(function(...)
+    InfiDashHook = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
         local args = {...}
         local method = getnamecallmethod()
        
-        if (args[1] == CharRemote and args[2] == 'Q' and method == "InvokeServer") then
+        if (self.Name == "Remote" and args[2] == 'Q' and method == "InvokeServer") then
             return(true)
         end
        
-        return InfiDashHook(...)
+        return InfiDashHook(self, ...)
     end))
 end)
 

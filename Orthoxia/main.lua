@@ -77,7 +77,7 @@ local Infidash = a:Button('Infi Dash', function()
             return(true)
         end
        
-        return mt(...)
+        return InfiDashHook(...)
     end))
 end)
 

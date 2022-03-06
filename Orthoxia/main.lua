@@ -5,9 +5,6 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyh
 local Plr = game:GetService("Players").LocalPlayer
 local Char = Plr.Character
 
--- Remotes
-local CharRemote = Char.Remote
-
 -- Virtual Keyboard
 local virtualUser = game:GetService('VirtualUser')
 virtualUser:CaptureController()
@@ -69,6 +66,8 @@ end)
 
 -- Infi Dash Button (Credit: Fuu - https://v3rmillion.net/member.php?action=profile&uid=1262238)
 local Infidash = a:Button('Infi Dash', function()
+    local CharRemote = Char:FindFirstChild("Remote")
+    
     local InfiDashHook
     InfiDashHook = hookmetamethod(game, "__namecall", newcclosure(function(...)
         local args = {...}

@@ -97,7 +97,7 @@ local ChestCollect = a:Button('Collect Chests', function()
 end)
 
 -- Toggle Auto Collect / Steal drops
-local AutoStealDrops = farm:Toggle('Auto Collect Drops', {flag = "AutoStealDrops"})
+local AutoStealDrops = a:Toggle('Auto Collect Drops', {flag = "AutoStealDrops"})
 
 -- Credit Tag
 a:Section("Created by HamstaGang");

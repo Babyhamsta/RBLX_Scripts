@@ -3,7 +3,7 @@ local Plr = game:GetService("Players").LocalPlayer
 local Char = Plr.Character
 
 -- UI Lib
-local lib = loadstring(game:HttpGet"https://izesty.xyz/scripts/UILibrary.lua")()
+local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/UILibs/FluxusUI.lua")()
 
 -- Main Window
 local window = lib:CreateWindow("Find The Markers")

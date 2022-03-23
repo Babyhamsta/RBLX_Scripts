@@ -42,9 +42,9 @@ end
 
 -- Teleport Bypass (Via Tween)
 function TP(Object) -- Object = part teleporting to.
-    local tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(12, Enum.EasingStyle.Quad) -- change the number to a higher number if you get kicked for TP.
+    local tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(75, Enum.EasingStyle.Quad) -- change the number to a higher number if you get kicked for TP.
     local tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(Object.Position + Vector3.new(0,5,0))})
-    tween:Play()  
+    tween:Play()
 end
 
 function EKey()

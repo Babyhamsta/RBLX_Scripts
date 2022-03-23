@@ -42,7 +42,7 @@ end
 
 -- Teleport Bypass (Via Tween)
 function TP(Object) -- Object = part teleporting to.
-    local tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(4, Enum.EasingStyle.Quad) -- change the number to a higher number if you get kicked for TP.
+    local tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(8, Enum.EasingStyle.Quad) -- change the number to a higher number if you get kicked for TP.
     local tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(Object.Position + Vector3.new(0,5,0))})
     tween:Play()  
 end
@@ -58,7 +58,7 @@ local GodMode = a:Button('God Mode', function()
         local method = getnamecallmethod()
         local args = {...}
     
-        if not checkcaller() and self.Name == "Damage" and method == "FireServer" then
+        if not checkcaller() and (self.Name == "Damage" or self.Name == "BreakJoints") and method == "FireServer" then
             return wait(9e9);
         end
     
@@ -97,7 +97,7 @@ local ChestCollect = a:Button('Collect Chests', function()
 end)
 
 -- Toggle Auto Collect / Steal drops
-local AutoStealDrops = a:Toggle('Auto Collect Drops', {flag = "AutoStealDrops"})
+--local AutoStealDrops = a:Toggle('Auto Collect Drops', {flag = "AutoStealDrops"})
 
 -- Credit Tag
 a:Section("Created by HamstaGang");
@@ -118,10 +118,11 @@ local ZoneTP = b:Button('Teleport to Zone', function()
 end)
 
 -- Auto Steal / Collect Drops
-spawn(function()
+--[[spawn(function()
     while wait() do
         if a.flags.AutoStealDrops then
             stealDrop()
         end
     end
 end)
+]]--

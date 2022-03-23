@@ -42,9 +42,15 @@ end
 
 -- Teleport Bypass (Via Tween)
 function TP(Object) -- Object = part teleporting to.
-    local tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(8, Enum.EasingStyle.Quad) -- change the number to a higher number if you get kicked for TP.
+    local tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(12, Enum.EasingStyle.Quad) -- change the number to a higher number if you get kicked for TP.
     local tween = tweenService:Create(game:GetService("Players")["LocalPlayer"].Character.HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(Object.Position + Vector3.new(0,5,0))})
     tween:Play()  
+end
+
+function EKey()
+   keypress(0x45)
+   wait(0.1)
+   keyrelease(0x45)
 end
 
 -- Main Window
@@ -87,11 +93,12 @@ local ChestCollect = a:Button('Collect Chests', function()
     for i, chest in ipairs(Chests) do
         if chest:FindFirstChild("Hitbox") then
             TP(chest:FindFirstChild("Hitbox"));
-            repeat wait() until (Char.HumanoidRootPart.Position - chest:FindFirstChild("Hitbox").Position).Magnitude < 5
+            repeat wait() until (Char.HumanoidRootPart.Position - chest:FindFirstChild("Hitbox").Position).Magnitude < 8
             
             -- Press and release E key
-            keypress(0x45)
-            keyrelease(0x45)
+            EKey()
+            EKey()
+            EKey()
         end
     end
 end)

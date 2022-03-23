@@ -75,16 +75,16 @@ end)
 -- Infi Dash Button (Credit: Fuu - https://v3rmillion.net/member.php?action=profile&uid=1262238)
 local Infidash = a:Button('Infi Dash', function()
     local InfiDashHook
-    InfiDashHook = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
-        local args = {...}
+    InfiDashHook = hookmetamethod(game, "__namecall", function(self, ...)
         local method = getnamecallmethod()
-       
-        if (self.Name == "Remote" and args[2] == 'Q' and method == "InvokeServer") then
-            return(true)
+        local args = {...}
+    
+        if not checkcaller() and self.Name == "Remote" and args[1] == 'Q' and method == "InvokeServer" then
+            return true;
         end
-       
+    
         return InfiDashHook(self, ...)
-    end))
+    end)
 end)
 
 -- Collect Chests Button

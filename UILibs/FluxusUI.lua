@@ -1,5 +1,3 @@
--- Last Updated 03/06/2022
-
 local lib = {};
 local UIS = game:GetService("UserInputService");
 local TS = game:GetService("TweenService");

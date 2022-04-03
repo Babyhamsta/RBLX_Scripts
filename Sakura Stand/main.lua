@@ -20,7 +20,7 @@ anticheat = hookmetamethod(game, "__index", newcclosure(function(...)
     if not checkcaller() and k == "WalkSpeed" and self.Name == "Humanoid" then
         return 16;
     elseif not checkcaller() and k == "JumpPower" and self.Name == "Humanoid" then
-        return 16;
+        return 50;
     elseif not checkcaller() and k == "Gravity" and self.Name == "Workspace" then
         return 196.2;
     end

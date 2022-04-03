@@ -287,9 +287,10 @@ local defaults; do
             self:Resize();
             
             local function reload(self, newtext)
+                print(self.Name)
+                print(check.Name)
                 check:FindFirstChildOfClass("TextButton").Name = newtext;
                 check:FindFirstChildOfClass("TextButton").Text = newtext;
-                game:GetService('Debris'):AddItem(check, 0)
             end
 
             return {

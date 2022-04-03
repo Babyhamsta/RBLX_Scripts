@@ -285,11 +285,17 @@ local defaults; do
             
             check:FindFirstChild(name).MouseButton1Click:connect(callback)
             self:Resize();
+            
+            local function reload(self, newtext)
+                self.Name = newtext;
+            end
 
             return {
                 Fire = function()
                     callback();
                 end
+                
+                Refresh = reload;
             }
         end
         

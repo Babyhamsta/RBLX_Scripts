@@ -10,9 +10,12 @@ end
 
 -- Plr
 local Plr = game:GetService("Players").LocalPlayer
+local Plr_GUI = Plr.PlayerGui
 local Char = Plr.Character
 
 -- Rand Locals
+local VirtualUser = game:GetService("VirtualUser")
+local VirtualInputManager = game:GetService("VirtualInputManager")
 local Players = game:GetService("Players")
 local maxplayerdistance = 500;
 local maxboxdistance = 500;
@@ -48,6 +51,9 @@ end))
 
 -- Main Window
 local a = library:CreateWindow("Sakura Stand")
+
+local AutoFarmBoxes = a:Toggle("Boxes Farm", {flag = "FarmBoxes"})
+local AutoDummyFarm = a:Toggle("Dummy Farm", {flag = "FarmDummy"})
 
 -- Credit Tag
 a:Section("Created by HamstaGang");
@@ -119,6 +125,77 @@ local ESPDummy_MAX = c:Slider("Max Studs", {min = 1; default = 500; max = 3000; 
   maxdummydistance = studs;
 end)
 
+-- Storage Window
+local d = library:CreateWindow("Storage")
+
+local Slot1
+Slot1 = d:Button('Slot 1', function()
+    game:GetService("ReplicatedStorage").StorageRemote.Slot1:FireServer()
+    wait(3)
+    pcall(function()
+        local Storage = Plr_GUI:WaitForChild("StandStorage", 10).Outer.Inner.Inner;
+        Slot1:Refresh(Storage["Slot1"].Text);
+    end)
+end)
+
+local Slot2
+Slot2 = d:Button('Slot 2', function()
+    game:GetService("ReplicatedStorage").StorageRemote.Slot2:FireServer()
+    wait(3)
+    pcall(function()
+        local Storage = Plr_GUI:WaitForChild("StandStorage", 10).Outer.Inner.Inner;
+        Slot2:Refresh(Storage["Slot2"].Text);
+    end)
+end)
+
+local Slot3
+Slot3 = d:Button('Slot 3', function()
+    game:GetService("ReplicatedStorage").StorageRemote.Slot3:FireServer()
+    wait(3)
+    pcall(function()
+        local Storage = Plr_GUI:WaitForChild("StandStorage", 10).Outer.Inner.Inner;
+        Slot3:Refresh(Storage["Slot3"].Text);
+    end)
+end)
+
+local Slot4
+Slot4 = d:Button('Slot 4', function()
+    game:GetService("ReplicatedStorage").StorageRemote.Slot4:FireServer()
+    wait(3)
+    pcall(function()
+        local Storage = Plr_GUI:WaitForChild("StandStorage", 10).Outer.Inner.Inner;
+        Slot4:Refresh(Storage["Slot4"].Text);
+    end)
+end)
+
+local Slot5
+Slot5 = d:Button('Slot 5', function()
+    game:GetService("ReplicatedStorage").StorageRemote.Slot5:FireServer()
+    wait(3)
+    pcall(function()
+        local Storage = Plr_GUI:WaitForChild("StandStorage", 10).Outer.Inner.Inner;
+        Slot5:Refresh(Storage["Slot5"].Text);
+    end)
+end)
+
+local Slot6
+Slot6 = d:Button('Slot 6', function()
+    game:GetService("ReplicatedStorage").StorageRemote.Slot6:FireServer()
+    wait(3)
+    pcall(function()
+        local Storage = Plr_GUI:WaitForChild("StandStorage", 10).Outer.Inner.Inner;
+        Slot6:Refresh(Storage["Slot6"].Text);
+    end)
+end)
+
+-- Quick Update All..
+local Storage = Plr_GUI:WaitForChild("StandStorage", 10).Outer.Inner.Inner;
+Slot1:Refresh(Storage["Slot1"].Text);
+Slot2:Refresh(Storage["Slot2"].Text);
+Slot3:Refresh(Storage["Slot3"].Text);
+Slot4:Refresh(Storage["Slot4"].Text);
+Slot5:Refresh(Storage["Slot5"].Text);
+Slot6:Refresh(Storage["Slot6"].Text);
 
 -- [[ ESP Function (Very Basic) ]] --
 
@@ -236,6 +313,74 @@ spawn(function()
             CreateNonPlrESP("Living", "dummytracker", maxdummydistance)
         else
            ClearESP("dummytracker");
+        end
+   end
+end)
+
+-- [[ Auto Farm Functions ]] --
+
+local function KeySpam()
+    pcall(function()
+        VirtualUser:CaptureController();
+        
+        -- T Key
+        VirtualInputManager:SendKeyEvent(true, "T", false, game)
+        wait(0.3)
+            
+        -- Y Key
+        VirtualInputManager:SendKeyEvent(true, "Y", false, game)
+        wait(0.3)
+            
+        -- R Key
+        VirtualInputManager:SendKeyEvent(true, "R", false, game)
+        wait(0.3)
+    end)
+end
+
+-- Dummy Attack Func
+local function AttkDummy(dummy)
+    pcall(function()
+        local RootPart = Plr.Character.HumanoidRootPart
+        RootPart.CFrame = dummy.PrimaryPart.CFrame + dummy.PrimaryPart.CFrame.lookVector * -5;
+        VirtualUser:CaptureController();
+        VirtualUser:ClickButton1(Vector2.new(0,0));
+    end)
+    
+    spawn(function()
+        KeySpam();
+    end)
+    task.wait()
+end
+
+-- Box Farm
+spawn(function()
+   while task.wait() do
+        if a.flags.FarmBoxes and not a.flags.FarmDummy then
+            local Boxes = game:GetService("Workspace").Item
+            
+            for _,v in pairs(Boxes:GetChildren()) do
+                if a.flags.FarmBoxes then -- Double check
+                    local RootPart = Char.HumanoidRootPart
+                    RootPart.CFrame = v.PrimaryPart.CFrame;
+                    wait(1.5)
+                    fireclickdetector(v:FindFirstChildOfClass("ClickDetector"));
+                end
+            end
+        end
+   end
+end)
+
+-- Dummy Farm
+spawn(function()
+   while task.wait() do
+        if a.flags.FarmDummy and not a.flags.FarmBoxes then
+            local Living = game:GetService("Workspace").Living
+            
+            for _,v in pairs(Living:GetChildren()) do
+                if a.flags.FarmDummy and v.Name == "Dummy" then -- Double check
+                    repeat AttkDummy(v) until (v.Humanoid.Health <= 0 or not a.flags.FarmDummy)
+                end
+            end
         end
    end
 end)

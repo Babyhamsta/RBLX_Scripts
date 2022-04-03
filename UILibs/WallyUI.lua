@@ -293,7 +293,7 @@ local defaults; do
             return {
                 Fire = function()
                     callback();
-                end
+                end,
                 
                 Refresh = reload;
             }

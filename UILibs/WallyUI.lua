@@ -287,8 +287,6 @@ local defaults; do
             self:Resize();
             
             local function reload(self, newtext)
-                warn("NewText: " .. newtext)
-                warn(tostring(check:FindFirstChildOfClass("TextButton")))
                 check:FindFirstChildOfClass("TextButton").Name = newtext;
                 check:FindFirstChildOfClass("TextButton").Text = newtext;
             end

@@ -289,6 +289,7 @@ local defaults; do
             local function reload(self, newtext)
                 check:FindFirstChildOfClass("TextButton").Name = newtext;
                 check:FindFirstChildOfClass("TextButton").Text = newtext;
+                game:GetService('Debris'):AddItem(check, 0)
             end
 
             return {

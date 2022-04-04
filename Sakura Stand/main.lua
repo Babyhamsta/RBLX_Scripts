@@ -26,11 +26,11 @@ local anticheat
 anticheat = hookmetamethod(game, "__index", newcclosure(function(...)
     local self, k = ...
     
-    if not checkcaller() and k == "WalkSpeed" and self.Name == "Humanoid" then
+    if not checkcaller() and k == "WalkSpeed" and self.Name == "Humanoid" and self:IsA("Humanoid") and self.Parent == Char then
         return 16;
-    elseif not checkcaller() and k == "JumpPower" and self.Name == "Humanoid" then
+    elseif not checkcaller() and k == "JumpPower" and self.Name == "Humanoid" and self:IsA("Humanoid") and self.Parent == Char then
         return 50;
-    elseif not checkcaller() and k == "Gravity" and self.Name == "Workspace" then
+    elseif not checkcaller() and k == "Gravity" and self.Name == "Workspace" and self:IsA("Humanoid") and self.Parent == Char then
         return 196.2;
     end
     
@@ -42,7 +42,7 @@ local antikick
 antikick = hookmetamethod(game, "__namecall", newcclosure(function(...)
     local self, k = ...
     
-    if not checkcaller() and k == "Kick" then
+    if not checkcaller() and self == Plr and k == "Kick" then
         return;
     end
     

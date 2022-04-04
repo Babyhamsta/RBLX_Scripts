@@ -39,10 +39,10 @@ end))
 
 -- Part of Anti Cheat Bypass
 local antikick
-antikick = hookmetamethod(game, "__namecall", newcclosure(function(...)
-    local self, k = ...
-    
-    if not checkcaller() and self == Plr and k == "Kick" then
+antikick = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+    local method = getnamecallmethod()
+
+    if not checkcaller() and self == Plr and method == "Kick" then
         return;
     end
     

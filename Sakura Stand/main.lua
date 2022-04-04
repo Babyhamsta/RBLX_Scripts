@@ -54,6 +54,7 @@ local a = library:CreateWindow("Sakura Stand")
 
 local AutoFarmBoxes = a:Toggle("Boxes Farm", {flag = "FarmBoxes"})
 local AutoDummyFarm = a:Toggle("Dummy Farm", {flag = "FarmDummy"})
+local AutoPlrFarm = a:Toggle("Player Farm", {flag = "FarmPlrs"})
 
 -- Credit Tag
 a:Section("Created by HamstaGang");
@@ -341,7 +342,7 @@ end
 local function AttkDummy(dummy)
     pcall(function()
         local RootPart = Plr.Character.HumanoidRootPart
-        RootPart.CFrame = dummy.PrimaryPart.CFrame + dummy.PrimaryPart.CFrame.lookVector * -5;
+        RootPart.CFrame = dummy.PrimaryPart.CFrame + dummy.PrimaryPart.CFrame.lookVector * -3;
         VirtualUser:CaptureController();
         VirtualUser:ClickButton1(Vector2.new(0,0));
     end)
@@ -355,7 +356,7 @@ end
 -- Box Farm
 spawn(function()
    while task.wait() do
-        if a.flags.FarmBoxes and not a.flags.FarmDummy then
+        if a.flags.FarmBoxes and not a.flags.FarmDummy and not a.flags.FarmPlrs then
             local Boxes = game:GetService("Workspace").Item
             
             for _,v in pairs(Boxes:GetChildren()) do
@@ -373,12 +374,26 @@ end)
 -- Dummy Farm
 spawn(function()
    while task.wait() do
-        if a.flags.FarmDummy and not a.flags.FarmBoxes then
+        if a.flags.FarmDummy and not a.flags.FarmBoxes and not a.flags.FarmPlrs then
             local Living = game:GetService("Workspace").Living
             
             for _,v in pairs(Living:GetChildren()) do
                 if a.flags.FarmDummy and v.Name == "Dummy" then -- Double check
                     repeat AttkDummy(v) until (v.Humanoid.Health <= 0 or not a.flags.FarmDummy)
+                end
+            end
+        end
+   end
+end)
+
+-- Plr Farm
+spawn(function()
+   while task.wait() do
+        if a.flags.FarmPlrs and not a.flags.FarmBoxes and not a.flags.FarmDummy then
+            local Players = game:GetService("Players")
+            for _,v in pairs(Players:GetChildren()) do
+                if a.flags.FarmPlrs and v ~= Plr then -- Double check
+                    repeat AttkDummy(v.Character) until (v.Character.Humanoid.Health <= 0 or not a.flags.FarmPlrs)
                 end
             end
         end

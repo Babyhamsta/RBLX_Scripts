@@ -39,15 +39,15 @@ end))
 
 -- Part of Anti Cheat Bypass
 local antikick
-antikick = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
-    local method = getnamecallmethod()
+antikick = hookmetamethod(game, "__namecall", function(...)
+    local self, k = ...
 
-    if not checkcaller() and self == Plr and method == "Kick" then
+    if not checkcaller() and self == Plr and k == "Kick" then
         return;
     end
     
     return antikick(...)
-end))
+end)
 
 -- Main Window
 local a = library:CreateWindow("Sakura Stand")

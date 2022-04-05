@@ -1,5 +1,7 @@
 -- This is a WIP so it doesn't have much.. game is garb.
 
+repeat wait() until game:IsLoaded(); -- ensure game is loaded.
+
 -- Wally's Lib
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/UILibs/WallyUI.lua", true))()
 
@@ -17,20 +19,32 @@ local Char = Plr.Character
 local VirtualUser = game:GetService("VirtualUser")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local Players = game:GetService("Players")
+local Selected_NPC = "XZ_LF";
+local NPCS_Arr = {};
 local maxplayerdistance = 500;
 local maxboxdistance = 500;
 local maxdummydistance = 500;
+
+-- Setup NPC Teleports
+function Setup_NPCTeleport()
+    local NPCS = game:GetService("Workspace"):WaitForChild("Map").NPCs
+
+    -- Add all NPCS to array
+    for i, NPC in pairs(NPCS:GetChildren()) do
+        table.insert(NPCS_Arr, NPC.Name);
+    end
+end
 
 -- Anti Cheat
 local anticheat
 anticheat = hookmetamethod(game, "__index", newcclosure(function(...)
     local self, k = ...
     
-    if not checkcaller() and k == "WalkSpeed" and self.Name == "Humanoid" and self:IsA("Humanoid") and self.Parent == Char then
+    if not checkcaller() and k == "WalkSpeed" and self.Name == "Humanoid" and self:IsA("Humanoid") then
         return 16;
-    elseif not checkcaller() and k == "JumpPower" and self.Name == "Humanoid" and self:IsA("Humanoid") and self.Parent == Char then
+    elseif not checkcaller() and k == "JumpPower" and self.Name == "Humanoid" and self:IsA("Humanoid") then
         return 50;
-    elseif not checkcaller() and k == "Gravity" and self.Name == "Workspace" and self:IsA("Humanoid") and self.Parent == Char then
+    elseif not checkcaller() and k == "Gravity" and self.Name == "Workspace" then
         return 196.2;
     end
     
@@ -55,6 +69,7 @@ local a = library:CreateWindow("Sakura Stand")
 local AutoFarmBoxes = a:Toggle("Boxes Farm", {flag = "FarmBoxes"})
 local AutoDummyFarm = a:Toggle("Dummy Farm", {flag = "FarmDummy"})
 local AutoPlrFarm = a:Toggle("Player Farm", {flag = "FarmPlrs"})
+local AutoSell = a:Toggle("Auto Sell", {flag = "AutoSellStuff"})
 
 -- Credit Tag
 a:Section("Created by HamstaGang");
@@ -69,7 +84,7 @@ local Jump_Cooldown = b:Button('Anti Jump Cooldown', function()
     antifloor = hookmetamethod(game, "__index", newcclosure(function(...)
         local self, k = ...
         
-        if not checkcaller() and k == "FloorMaterial" and self.Name == "Humanoid" then
+        if not checkcaller() and k == "FloorMaterial" and self.Name == "Humanoid" and self:IsA("Humanoid") then
             return "Plasic";
         end
         
@@ -197,6 +212,24 @@ Slot3:Refresh(Storage["Slot3"].Text);
 Slot4:Refresh(Storage["Slot4"].Text);
 Slot5:Refresh(Storage["Slot5"].Text);
 Slot6:Refresh(Storage["Slot6"].Text);
+
+-- Teleport Window
+local e = library:CreateWindow("Teleports")
+
+-- Setup Array
+Setup_NPCTeleport();
+
+local NPCTeleports = e:Dropdown('NPC Select', {flag = "NPCSelect"; list = NPCS_Arr;}, function(v)
+    Selected_NPC = v;
+end)
+
+local NPC_Teleport = e:Button('Teleport to NPC', function()
+    local Plr = game:GetService("Players").LocalPlayer
+    local NPCS = game:GetService("Workspace"):WaitForChild("Map").NPCs
+        
+    Plr.Character.PrimaryPart.CFrame = NPCS[Selected_NPC].PrimaryPart.CFrame;
+end)
+
 
 -- [[ ESP Function (Very Basic) ]] --
 
@@ -355,20 +388,21 @@ end
 
 -- Box Farm
 spawn(function()
-   while task.wait() do
+    while task.wait() do
         if a.flags.FarmBoxes and not a.flags.FarmDummy and not a.flags.FarmPlrs then
             local Boxes = game:GetService("Workspace").Item
-            
             for _,v in pairs(Boxes:GetChildren()) do
-                if a.flags.FarmBoxes then -- Double check
+                if a.flags.FarmBoxes and not v:FindFirstChild("Used") then -- Double check
                     local RootPart = Char.HumanoidRootPart
-                    RootPart.CFrame = v.PrimaryPart.CFrame;
-                    wait(1.5)
+                    RootPart.CFrame = v.PrimaryPart.CFrame
+                    wait(0.1)
                     fireclickdetector(v:FindFirstChildOfClass("ClickDetector"));
+                    wait(0.1)
+                    RootPart.CFrame = CFrame.new(-812, -33., 1670); -- temp hiding place
                 end
             end
         end
-   end
+    end
 end)
 
 -- Dummy Farm
@@ -394,6 +428,20 @@ spawn(function()
             for _,v in pairs(Players:GetChildren()) do
                 if a.flags.FarmPlrs and v ~= Plr then -- Double check
                     repeat AttkDummy(v.Character) until (v.Character.Humanoid.Health <= 0 or not a.flags.FarmPlrs)
+                end
+            end
+        end
+   end
+end)
+
+-- Auto Sell
+spawn(function()
+   while task.wait() do
+        if a.flags.AutoSellStuff then
+            local Backpack = game:GetService("Players").LocalPlayer.Backpack
+            for _,v in pairs(Backpack:GetChildren()) do
+                if a.flags.AutoSellStuff then -- Double check
+                    game:GetService("ReplicatedStorage").GlobalUsedRemotes.SellItem:FireServer(v.Name)
                 end
             end
         end

@@ -15,10 +15,16 @@ for i,v in next, getconnections(game.DescendantAdded) do
     v:Disable()
 end
 
--- Log Service Bypass
+-- LogService Bypass
 for i,v in next, getconnections(game:GetService("LogService").MessageOut) do
     v:Disable()
 end
+
+--Setmetatable Bypass (Stolen from Lego Hacker (V3RM))
+local smt_hook; smt_hook = hookfunction(setmetatable, function(self, method, ...)
+   if method["__mode"] then method["__mode"] = nil end
+   return smt_hook(self, method, ...)    
+end)
 
 -- ContentProvider Bypass
 local ContentProvider = game:GetService("ContentProvider")

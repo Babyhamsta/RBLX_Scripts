@@ -12,7 +12,7 @@ end)
 
 -- DecendantAdded Bypass
 for i,v in next, getconnections(game.DescendantAdded) do
-   v:Disable()
+    v:Disable()
 end
 
 -- Log Service Bypass
@@ -26,7 +26,7 @@ local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     local method = getnamecallmethod();
     local args = ...;
-    
+
     if not checkcaller() and method == "preloadAsync" and self == ContentProvider then
         return wait();
     end
@@ -39,28 +39,28 @@ local UserInputService = game:GetService("UserInputService")
 local TextboxBypass
 TextboxBypass = hookmetamethod(game, "__namecall", function(self,...)
     local Method = getnamecallmethod();
-	if Method == "GetFocusedTextBox" and self == UserInputService then
-		local Value = TextboxBypass(self,...)
-		if Value and typeof(Value) == "Instance" then 
-			if Value:IsDescendantOf(game:GetService("CoreGui")) then
-				return nil;
-			end    
-		end
-	end 
-	return TextboxBypass(self,...)
+    if Method == "GetFocusedTextBox" and self == UserInputService then
+        local Value = TextboxBypass(self,...)
+        if Value and typeof(Value) == "Instance" then
+            if Value:IsDescendantOf(game:GetService("CoreGui")) then
+                return nil;
+            end
+        end
+    end
+    return TextboxBypass(self,...)
 end)
 
 --Newproxy Bypass (Stolen from Lego Hacker (V3RM))
 local TableNumbaor001 = {}
 local SomethingOld;
 SomethingOld = hookfunction(getrenv().newproxy, function(...)
-	local proxy = SomethingOld(...)
-	table.insert(TableNumbaor001, proxy)
-	return proxy
+    local proxy = SomethingOld(...)
+    table.insert(TableNumbaor001, proxy)
+    return proxy
 end)
 
 game:GetService("RunService").Stepped:Connect(function()
-	for i,v in pairs(TableNumbaor001) do
-		if v == nil then end
-	end    
+    for i,v in pairs(TableNumbaor001) do
+        if v == nil then end
+    end
 end)

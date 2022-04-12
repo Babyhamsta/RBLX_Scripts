@@ -37,7 +37,7 @@ end))
 -- GetFocusedTextBox Bypass (Inspired by Lego Hacker)
 local UserInputService = game:GetService("UserInputService")
 local TextboxBypass
-TextboxBypass = hookmetamethod(game, "__namecall", function(self,...)
+TextboxBypass = hookmetamethod(game, "__namecall", newcclosure(function(self,...)
     local Method = getnamecallmethod();
     if Method == "GetFocusedTextBox" and self == UserInputService then
         local Value = TextboxBypass(self,...)
@@ -48,7 +48,7 @@ TextboxBypass = hookmetamethod(game, "__namecall", function(self,...)
         end
     end
     return TextboxBypass(self,...)
-end)
+end))
 
 --Newproxy Bypass (Stolen from Lego Hacker (V3RM))
 local TableNumbaor001 = {}

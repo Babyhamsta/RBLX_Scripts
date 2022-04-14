@@ -63,7 +63,7 @@ local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     local method = getnamecallmethod();
 
-    if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") and self == ContentProvider and typeof(self) == "Instance" then
+    if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") and self == ContentProvider then
         return wait();
     end
 
@@ -75,7 +75,7 @@ local UserInputService = game:GetService("UserInputService")
 local TextboxBypass
 TextboxBypass = hookmetamethod(game, "__namecall", newcclosure(function(self,...)
     local Method = getnamecallmethod();
-    if Method == "GetFocusedTextBox" and self == UserInputService and typeof(self) == "Instance" then
+    if Method == "GetFocusedTextBox" and self == UserInputService then
         local Value = TextboxBypass(self,...)
         if Value and typeof(Value) == "Instance" then
             if Value:IsDescendantOf(game:GetService("CoreGui")) then

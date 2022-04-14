@@ -2,15 +2,15 @@
 
 -- GCInfo Bypass (Inspired by Lego)
 spawn(function()
-    repeat wait() until game:IsLoaded() 
+    repeat wait() until game:IsLoaded()
 
-	local CurrGC = gcinfo();
-	local Rand = 0
+    local CurrGC = gcinfo();
+    local Rand = 0
     local RunService = cloneref(game:GetService("RunService"))
 
-	RunService.Stepped:Connect(function()
-		Rand = math.random(-200,200)
-	end)
+    RunService.Stepped:Connect(function()
+        Rand = math.random(-200,200)
+    end)
 
     local GCINFO_Hook;
     GCINFO_Hook = hookfunction(gcinfo, function(...)
@@ -23,18 +23,18 @@ end)
 
 -- Memory Bypass
 spawn(function()
-    repeat wait() until game:IsLoaded() 
-    
+    repeat wait() until game:IsLoaded()
+
     local RunService = cloneref(game:GetService("RunService"))
     local Stats = cloneref(game:GetService("Stats"))
-    
-    local StaticMem = {}
-	local CurrMem = Stats:GetTotalMemoryUsageMb();
-	local Rand = 0
 
-	RunService.Stepped:Connect(function()
-		Rand = math.random(-5,5)
-	end)
+    local StaticMem = {}
+    local CurrMem = Stats:GetTotalMemoryUsageMb();
+    local Rand = 0
+
+    RunService.Stepped:Connect(function()
+        Rand = math.random(-5,5)
+    end)
 
     if StaticMem[1] == nil then
         table.insert(StaticMem, CurrMem)
@@ -64,7 +64,7 @@ local ContentProvider, UserInputService, CoreGUI = cloneref(game:GetService("Con
 local _oldnamecall
 _oldnamecall = hookmetamethod(game, "__namecall", function(self,...)
     local method = getnamecallmethod();
-        
+
     if not checkcaller() and method == "GetFocusedTextBox" and self == UserInputService then
         local Value = TextboxBypass(self,...)
         if Value and typeof(Value) == "Instance" then
@@ -75,7 +75,7 @@ _oldnamecall = hookmetamethod(game, "__namecall", function(self,...)
     elseif not checkcaller() and method:lower() == "preloadasync" and self == ContentProvider then
         return wait();
     end
-        
+
     return _oldnamecall(self,...)
 end)
 

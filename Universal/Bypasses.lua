@@ -22,12 +22,29 @@ spawn(function()
 end)
 
 -- Memory Bypass
-local Memory_Hook;
-Memory_Hook = hookfunction(Stats.GetTotalMemoryUsageMb, function(...)
-    if not checkcaller() then
-        return math.random(506, 520);
-    end
-    return Memory_Hook(...)
+spawn(function()
+    repeat wait() until game:IsLoaded()
+
+    local RunService = cloneref(game:GetService("RunService"))
+    
+    local Stats = cloneref(game:GetService("Stats"))
+    local CurrMem = Stats:GetTotalMemoryUsageMb();
+    local Rand = 0
+
+    RunService.Stepped:Connect(function()
+        Rand = math.random(-3,3)
+    end)
+
+    local _MemBypass
+    _MemBypass = hookmetamethod(game, "__namecall", function(self,...)
+        local method = getnamecallmethod();
+    
+        if not checkcaller() and method == "GetTotalMemoryUsageMb" then
+            return CurrMem + Rand;
+        end
+    
+        return _MemBypass(self,...)
+    end)
 end)
 
 -- DecendantAdded Bypass

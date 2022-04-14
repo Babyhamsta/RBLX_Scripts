@@ -57,25 +57,35 @@ for i,v in next, getconnections(game:GetService("LogService").MessageOut) do
     v:Disable()
 end
 
--- ContentProvider/GetFocusedTextBox Bypass
-local ContentProvider, UserInputService, CoreGUI = cloneref(game:GetService("ContentProvider")), cloneref(game:GetService("UserInputService")), cloneref(game:GetService("CoreGui"))
-local _oldnamecall
-_oldnamecall = hookmetamethod(game, "__namecall", function(self,...)
+-- ContentProvider Bypass
+local ContentProvider = cloneref(game:GetService("ContentProvider"))
+local ContentProviderBypass
+ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     local method = getnamecallmethod();
 
-    if not checkcaller() and method == "GetFocusedTextBox" and self == UserInputService then
+    if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") and self == ContentProvider then
+        return wait();
+    end
+
+    return ContentProviderBypass(self, ...)
+end))
+
+-- GetFocusedTextBox Bypass (Inspired by Lego Hacker)
+local UserInputService = cloneref(game:GetService("UserInputService"))
+local CoreGUI = cloneref(game:GetService("CoreGui"));
+local TextboxBypass
+TextboxBypass = hookmetamethod(game, "__namecall", newcclosure(function(self,...)
+    local Method = getnamecallmethod();
+    if Method == "GetFocusedTextBox" and self == UserInputService then
         local Value = TextboxBypass(self,...)
         if Value and typeof(Value) == "Instance" then
             if Value:IsDescendantOf(CoreGUI) then
                 return nil;
             end
         end
-    elseif not checkcaller() and method:lower() == "preloadasync" and self == ContentProvider then
-        return wait();
     end
-
-    return _oldnamecall(self,...)
-end)
+    return TextboxBypass(self,...)
+end))
 
 --Newproxy Bypass (Stolen from Lego Hacker (V3RM))
 local TableNumbaor001 = {}

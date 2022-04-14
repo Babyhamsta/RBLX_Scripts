@@ -1,6 +1,6 @@
 -- Pretty much just a bunch of know detection bypasses.
 
--- GCInfo Bypass (Inspired by Lego)
+-- GCInfo/CollectGarbage Bypass (Inspired by Lego)
 spawn(function()
     repeat wait() until game:IsLoaded()
 
@@ -18,6 +18,14 @@ spawn(function()
             return CurrGC + Rand;
         end
         return GCINFO_Hook(...)
+    end)
+     
+    local GC_Hook;
+    GC_Hook = hookfunction(collectgarbage, function(...)
+        if not checkcaller() then
+            return CurrGC + Rand;
+        end
+        return GC_Hook(...)
     end)
 end)
 

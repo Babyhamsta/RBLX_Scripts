@@ -1,4 +1,4 @@
--- Pretty much just a bunch of know detection bypasses.
+-- Pretty much just a bunch of know detection bypasses. (Big thanks to Lego Hacker, Modulus, and Bluwu)
 
 -- GCInfo/CollectGarbage Bypass (Inspired by Lego)
 spawn(function()
@@ -22,7 +22,8 @@ spawn(function()
      
     local GC_Hook;
     GC_Hook = hookfunction(collectgarbage, function(...)
-        if not checkcaller() then
+        local args = ...;
+        if not checkcaller() and args == "count" then
             return CurrGC + Rand;
         end
         return GC_Hook(...)
@@ -47,7 +48,7 @@ spawn(function()
     _MemBypass = hookmetamethod(game, "__namecall", function(self,...)
         local method = getnamecallmethod();
     
-        if not checkcaller() and method == "GetTotalMemoryUsageMb" then
+        if not checkcaller() and method == "GetTotalMemoryUsageMb" and self:IsA("Stats") then
             return CurrMem + Rand;
         end
     
@@ -71,7 +72,7 @@ local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     local method = getnamecallmethod();
 
-    if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") and self == ContentProvider then
+    if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") and self:IsA("ContentProvider") then
         return wait();
     end
 
@@ -83,7 +84,7 @@ local UserInputService = game:GetService("UserInputService")
 local TextboxBypass
 TextboxBypass = hookmetamethod(game, "__namecall", newcclosure(function(self,...)
     local Method = getnamecallmethod();
-    if Method == "GetFocusedTextBox" and self == UserInputService then
+    if Method == "GetFocusedTextBox" and self:IsA("UserInputService") then
         local Value = TextboxBypass(self,...)
         if Value and typeof(Value) == "Instance" then
             if Value:IsDescendantOf(game:GetService("CoreGui")) then

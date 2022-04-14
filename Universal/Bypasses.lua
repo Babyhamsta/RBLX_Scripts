@@ -22,31 +22,12 @@ spawn(function()
 end)
 
 -- Memory Bypass
-spawn(function()
-    repeat wait() until game:IsLoaded()
-
-    local RunService = cloneref(game:GetService("RunService"))
-    local Stats = cloneref(game:GetService("Stats"))
-
-    local StaticMem = {}
-    local CurrMem = Stats:GetTotalMemoryUsageMb();
-    local Rand = 0
-
-    RunService.Stepped:Connect(function()
-        Rand = math.random(-5,5)
-    end)
-
-    if StaticMem[1] == nil then
-        table.insert(StaticMem, CurrMem)
+local Memory_Hook;
+Memory_Hook = hookfunction(Stats.GetTotalMemoryUsageMb, function(...)
+    if not checkcaller() then
+        return math.random(506, 520);
     end
-
-    local Memory_Hook;
-    Memory_Hook = hookfunction(Stats.GetTotalMemoryUsageMb, function(...)
-        if not checkcaller() then
-            return StaticMem[1] + Rand;
-        end
-        return Memory_Hook(...)
-    end)
+    return Memory_Hook(...)
 end)
 
 -- DecendantAdded Bypass

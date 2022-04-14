@@ -95,7 +95,7 @@ SomethingOld = hookfunction(getrenv().newproxy, function(...)
     return proxy
 end)
 
-local RunService = cloneref(game:GetService("RunService"))
+local RunService = game:GetService("RunService")
 RunService.Stepped:Connect(function()
     for i,v in pairs(TableNumbaor001) do
         if v == nil then end

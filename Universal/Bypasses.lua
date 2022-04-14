@@ -6,7 +6,7 @@ spawn(function()
 
     local CurrGC = gcinfo();
     local Rand = 0
-    local RunService = cloneref(game:GetService("RunService"))
+    local RunService = game:GetService("RunService")
 
     RunService.Stepped:Connect(function()
         Rand = math.random(-200,200)
@@ -25,9 +25,9 @@ end)
 spawn(function()
     repeat wait() until game:IsLoaded()
 
-    local RunService = cloneref(game:GetService("RunService"))
+    local RunService = game:GetService("RunService")
     
-    local Stats = cloneref(game:GetService("Stats"))
+    local Stats = game:GetService("Stats")
     local CurrMem = Stats:GetTotalMemoryUsageMb();
     local Rand = 0
 
@@ -58,12 +58,12 @@ for i,v in next, getconnections(game:GetService("LogService").MessageOut) do
 end
 
 -- ContentProvider Bypass
-local ContentProvider = cloneref(game:GetService("ContentProvider"))
+local ContentProvider = game:GetService("ContentProvider")
 local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     local method = getnamecallmethod();
 
-    if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") and self == ContentProvider then
+    if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") and self == ContentProvider and typeof(self) == "Instance" then
         return wait();
     end
 
@@ -71,15 +71,14 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(
 end))
 
 -- GetFocusedTextBox Bypass (Inspired by Lego Hacker)
-local UserInputService = cloneref(game:GetService("UserInputService"))
-local CoreGUI = cloneref(game:GetService("CoreGui"));
+local UserInputService = game:GetService("UserInputService")
 local TextboxBypass
 TextboxBypass = hookmetamethod(game, "__namecall", newcclosure(function(self,...)
     local Method = getnamecallmethod();
-    if Method == "GetFocusedTextBox" and self == UserInputService then
+    if Method == "GetFocusedTextBox" and self == UserInputService and typeof(self) == "Instance" then
         local Value = TextboxBypass(self,...)
         if Value and typeof(Value) == "Instance" then
-            if Value:IsDescendantOf(CoreGUI) then
+            if Value:IsDescendantOf(game:GetService("CoreGui")) then
                 return nil;
             end
         end

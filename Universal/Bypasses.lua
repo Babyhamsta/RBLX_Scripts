@@ -67,7 +67,6 @@ for i,v in next, getconnections(game:GetService("LogService").MessageOut) do
 end
 
 -- ContentProvider Bypass
-local ContentProvider = game:GetService("ContentProvider")
 local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     local method = getnamecallmethod();
@@ -80,7 +79,6 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(
 end))
 
 -- GetFocusedTextBox Bypass (Inspired by Lego Hacker)
-local UserInputService = game:GetService("UserInputService")
 local TextboxBypass
 TextboxBypass = hookmetamethod(game, "__namecall", newcclosure(function(self,...)
     local Method = getnamecallmethod();

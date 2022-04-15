@@ -123,7 +123,7 @@ end))
 local TextboxBypass
 TextboxBypass = hookmetamethod(game, "__namecall", newcclosure(function(self,...)
     local Method = getnamecallmethod();
-    if Method == "GetFocusedTextBox" and self:IsA("UserInputService") then
+    if not checkcaller() and Method == "GetFocusedTextBox" and self:IsA("UserInputService") then
         local Value = TextboxBypass(self,...)
         if Value and typeof(Value) == "Instance" then
             if Value:IsDescendantOf(game:GetService("CoreGui")) then

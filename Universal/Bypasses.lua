@@ -72,7 +72,7 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(
     local method = getnamecallmethod();
 
     if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") and self:IsA("ContentProvider") then
-        return wait();
+        return;
     end
 
     return ContentProviderBypass(self, ...)

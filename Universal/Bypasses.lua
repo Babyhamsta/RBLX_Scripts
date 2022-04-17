@@ -119,20 +119,17 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(
     return ContentProviderBypass(self, ...)
 end))
 
--- GetFocusedTextBox Bypass (Inspired by Lego Hacker)
+-- GetFocusedTextBox Bypass
 local TextboxBypass
-TextboxBypass = hookmetamethod(game, "__namecall", newcclosure(function(self,...)
+TextboxBypass = hookmetamethod(game, "__namecall", function(self,...)
     local Method = getnamecallmethod();
+    
     if not checkcaller() and Method == "GetFocusedTextBox" and self:IsA("UserInputService") then
-        local Value = TextboxBypass(self,...)
-        if Value and typeof(Value) == "Instance" then
-            if Value:IsDescendantOf(game:GetService("CoreGui")) then
-                return nil;
-            end
-        end
+        return nil;
     end
+    
     return TextboxBypass(self,...)
-end))
+end)
 
 --Newproxy Bypass (Stolen from Lego Hacker (V3RM))
 local TableNumbaor001 = {}

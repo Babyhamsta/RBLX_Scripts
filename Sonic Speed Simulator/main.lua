@@ -63,6 +63,10 @@ game:GetService("UserInputService").InputBegan:Connect(function(Input)
     end
 end)
 
+-- Anti AFK
+for i,v in pairs(getconnections(Players.LocalPlayer.Idled)) do
+    v:Disable()
+end
 
 -- [[ Auto Farm Functions ]] --
 

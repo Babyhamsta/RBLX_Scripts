@@ -84,8 +84,10 @@ spawn(function()
     _MemBypass = hookmetamethod(game, "__namecall", function(self,...)
         local method = getnamecallmethod();
     
-        if not checkcaller() and method == "GetTotalMemoryUsageMb" and self:IsA("Stats") then
-            return CurrMem + Rand;
+        if not checkcaller() then
+       		if typeof(self) == "Instance" and method == "GetTotalMemoryUsageMb" and self:IsA("Stats") then
+            	return CurrMem + Rand;
+            end
         end
     
         return _MemBypass(self,...)
@@ -97,18 +99,14 @@ for i,v in next, getconnections(game.DescendantAdded) do
     v:Disable()
 end
 
--- LogService Bypass (Yes it disables printing and ect.. you shouldn't be printing to dev console)
-for i,v in next, getconnections(game:GetService("LogService").MessageOut) do
-    v:Disable()
-end
-
 -- ContentProvider Bypass
 local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     local method = getnamecallmethod();
     local args = ...;
     
-    if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") and self:IsA("ContentProvider") then
+    if not checkcaller() then
+    if typeof(self) == "Instance" and (method == "preloadAsync" or method == "PreloadAsync") and self:IsA("ContentProvider") then
         if args[1] ~= nil then
             if type(args[1]) == "table" then
                 return;
@@ -122,13 +120,19 @@ end))
 -- GetFocusedTextBox Bypass
 local TextboxBypass
 TextboxBypass = hookmetamethod(game, "__namecall", function(self,...)
-    local Method = getnamecallmethod();
-    
-    if not checkcaller() and Method == "GetFocusedTextBox" and self:IsA("UserInputService") then
-        return nil;
-    end
-    
-    return TextboxBypass(self,...)
+	local Method = getnamecallmethod();
+
+	if not checkcaller() then
+		if typeof(self) == "Instance" and Method == "GetFocusedTextBox" and self:IsA("UserInputService") then
+			if self:IsDescendantOf(Bypassed_Dex) then
+				return nil;
+			else
+				return TextboxBypass(self,...);
+			end
+		end
+	end
+
+	return TextboxBypass(self,...);
 end)
 
 --Newproxy Bypass (Stolen from Lego Hacker (V3RM))
@@ -140,7 +144,7 @@ SomethingOld = hookfunction(getrenv().newproxy, function(...)
     return proxy
 end)
 
-local RunService = game:GetService("RunService")
+local RunService = cloneref(game:GetService("RunService"))
 RunService.Stepped:Connect(function()
     for i,v in pairs(TableNumbaor001) do
         if v == nil then end

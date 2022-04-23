@@ -101,20 +101,21 @@ end
 
 -- ContentProvider Bypass
 local ContentProviderBypass
-ContentProviderBypass = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
+ContentProviderBypass = hookmetamethod(game, "__namecall", (function(self, ...)
     local method = getnamecallmethod();
     local args = ...;
     
     if not checkcaller() then
-    if typeof(self) == "Instance" and (method == "preloadAsync" or method == "PreloadAsync") and self:IsA("ContentProvider") then
-        if args[1] ~= nil then
-            if type(args[1]) == "table" then
-                return;
+        if typeof(self) == "Instance" and (method == "preloadAsync" or method == "PreloadAsync") and self:IsA("ContentProvider") then
+            if args[1] ~= nil then
+                if type(args[1]) == "table" then
+                    return;
+                end
             end
         end
     end
 
-    return ContentProviderBypass(self, ...)
+    return ContentProviderBypass(self, ...);
 end))
 
 -- GetFocusedTextBox Bypass

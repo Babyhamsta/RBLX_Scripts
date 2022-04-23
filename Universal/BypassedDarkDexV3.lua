@@ -8,7 +8,6 @@ GetGC Spoof
 Memory Spoof
 ContentProvider Bypass
 GetFocusedTextBox Bypass
-Log Service Out Bypass
 DecendantAdded Disabler
 CloneRef (Overall protection of Instances and other UserData)
 ]]

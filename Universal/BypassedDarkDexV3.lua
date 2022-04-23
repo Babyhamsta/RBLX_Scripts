@@ -18,7 +18,7 @@ CloneRef (Overall protection of Instances and other UserData)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/Bypasses.lua", true))()
 
 -- Dex with CloneRef Support
-getgenv().Dex = game:GetObjects("rbxassetid://9352453730")[1]
+getgenv().Bypassed_Dex = game:GetObjects("rbxassetid://9352453730")[1]
 math.randomseed(tick())
 
 local charset = {}
@@ -33,8 +33,8 @@ function RandomCharacters(length)
   end
 end
 
-Dex.Name = RandomCharacters(math.random(5, 20))
-Dex.Parent = game:GetService("CoreGui")
+Bypassed_Dex.Name = RandomCharacters(math.random(5, 20))
+Bypassed_Dex.Parent = game:GetService("CoreGui")
 
 getcustomasset = getsynasset or getcustomasset
 base64decode = syn_crypt_b64_decode or (crypt and crypt.base64decode)
@@ -91,4 +91,4 @@ local function Load(Obj, Url)
 	LoadScripts(Obj)
 end
 
-Load(Dex)
+Load(Bypassed_Dex)

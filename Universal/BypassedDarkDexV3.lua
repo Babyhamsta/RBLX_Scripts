@@ -18,7 +18,7 @@ CloneRef (Overall protection of Instances and other UserData)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/Bypasses.lua", true))()
 
 -- Dex with CloneRef Support
-local Dex = game:GetObjects("rbxassetid://9352453730")[1]
+getgenv().Dex = game:GetObjects("rbxassetid://9352453730")[1]
 math.randomseed(tick())
 
 local charset = {}

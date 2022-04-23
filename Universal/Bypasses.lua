@@ -19,10 +19,10 @@ spawn(function()
     --Waiting for gcinfo to decrease
     while task.wait() do
         if gcinfo() >= Maxima then
-            Maxima = gcinfo()    
+            Maxima = gcinfo()
         else
-            break    
-        end    
+            break
+        end
     end
 
     task.wait(0.30)
@@ -32,8 +32,8 @@ spawn(function()
 
     --Spoofing gcinfo
     local Old; Old = hookfunction(gcinfo, function(...)
-        local Formula = ((acos(cos(pi * (tick)))/pi * (Amplitude * 2)) + -Amplitude ) 
-        return floor(OldGcInfo + Formula) 
+        local Formula = ((acos(cos(pi * (tick)))/pi * (Amplitude * 2)) + -Amplitude )
+        return floor(OldGcInfo + Formula)
     end)
     local Old2; Old2 = hookfunction(collectgarbage, function(arg, ...)
         if arg == "collect" then
@@ -44,7 +44,7 @@ spawn(function()
 
 
     game:GetService("RunService").Stepped:Connect(function()
-        local Formula = ((acos(cos(pi * (tick)))/pi * (Amplitude * 2)) + -Amplitude ) 
+        local Formula = ((acos(cos(pi * (tick)))/pi * (Amplitude * 2)) + -Amplitude )
         if Formula > ((acos(cos(pi * (tick)+.01))/pi * (Amplitude * 2)) + -Amplitude ) then
             tick = tick + .07
         else
@@ -71,7 +71,7 @@ spawn(function()
     repeat task.wait() until game:IsLoaded()
 
     local RunService = game:GetService("RunService")
-    
+
     local Stats = game:GetService("Stats")
     local CurrMem = Stats:GetTotalMemoryUsageMb();
     local Rand = 0
@@ -83,13 +83,13 @@ spawn(function()
     local _MemBypass
     _MemBypass = hookmetamethod(game, "__namecall", function(self,...)
         local method = getnamecallmethod();
-    
+
         if not checkcaller() then
-       		if typeof(self) == "Instance" and method == "GetTotalMemoryUsageMb" and self:IsA("Stats") then
-            	return CurrMem + Rand;
+            if typeof(self) == "Instance" and method == "GetTotalMemoryUsageMb" and self:IsA("Stats") then
+                return CurrMem + Rand;
             end
         end
-    
+
         return _MemBypass(self,...)
     end)
 end)
@@ -104,7 +104,7 @@ local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", (function(self, ...)
     local method = getnamecallmethod();
     local args = ...;
-    
+
     if not checkcaller() then
         if typeof(self) == "Instance" and (method == "preloadAsync" or method == "PreloadAsync") and self:IsA("ContentProvider") then
             if args[1] ~= nil then
@@ -121,19 +121,19 @@ end))
 -- GetFocusedTextBox Bypass
 local TextboxBypass
 TextboxBypass = hookmetamethod(game, "__namecall", function(self,...)
-	local Method = getnamecallmethod();
+    local Method = getnamecallmethod();
 
-	if not checkcaller() then
-		if typeof(self) == "Instance" and Method == "GetFocusedTextBox" and self:IsA("UserInputService") then
-			if self:IsDescendantOf(Bypassed_Dex) then
-				return nil;
-			else
-				return TextboxBypass(self,...);
-			end
-		end
-	end
+    if not checkcaller() then
+        if typeof(self) == "Instance" and Method == "GetFocusedTextBox" and self:IsA("UserInputService") then
+            if self:IsDescendantOf(Bypassed_Dex) then
+                return nil;
+            else
+                return TextboxBypass(self,...);
+            end
+        end
+    end
 
-	return TextboxBypass(self,...);
+    return TextboxBypass(self,...);
 end)
 
 --Newproxy Bypass (Stolen from Lego Hacker (V3RM))

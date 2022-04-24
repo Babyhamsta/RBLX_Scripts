@@ -111,19 +111,22 @@ for i,v in pairs(CoreGui:GetDescendants()) do
 end
 
 local ContentProviderBypass
-ContentProviderBypass = hookmetamethod(game, "__namecall", (function(self, ...)
-    if not checkcaller() then
-        if typeof(self) == "Instance" and (method == "preloadAsync" or method == "PreloadAsync") and self.ClassName == "ContentProvider" then
+ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, ...)
+    local method = getnamecallmethod();
+    local args = ...;
+    
+    if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") then
+        if self.ClassName == "ContentProvider" then
             if args[1] ~= nil then
-                if type(args[1]) == "table" then
+                if typeof(args[1]) == "Instance" then
                     return;
                 end
             end
         end
     end
-
-    return ContentProviderBypass(self, ...);
-end))
+    
+    return ContentProviderBypass(self, ...)
+end)
 
 local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function(a, b, c)
     if not checkcaller() then

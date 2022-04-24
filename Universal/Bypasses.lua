@@ -120,6 +120,8 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", (function(self, ...)
                 end
             end
         end
+    end
+
     return ContentProviderBypass(self, ...);
 end))
 
@@ -133,7 +135,7 @@ local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function
             end
         end
     end
-    
+
     return preloadBypass(a, b, c)
 end)
 

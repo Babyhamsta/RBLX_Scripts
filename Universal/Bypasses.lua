@@ -117,7 +117,7 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", (function(self, ...)
     local args = ...;
 
     if not checkcaller() then
-        if typeof(self) == "Instance" and (method == "preloadAsync" or method == "PreloadAsync") and self:IsA("ContentProvider") then
+        if typeof(self) == "Instance" and (method == "preloadAsync" or method == "PreloadAsync") and self.ClassName == "ContentProvider" then
             if args[1] ~= nil then
                 local Core = args[1];
                 if type(Core) == "table" then

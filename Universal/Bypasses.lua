@@ -85,7 +85,7 @@ spawn(function()
         local method = getnamecallmethod();
 
         if not checkcaller() then
-            if typeof(self) == "Instance" and method == "GetTotalMemoryUsageMb" and self:IsA("Stats") then
+            if typeof(self) == "Instance" and method == "GetTotalMemoryUsageMb" and self.ClassName == "Stats" then
                 return CurrMem + Rand;
             end
         end
@@ -153,7 +153,7 @@ TextboxBypass = hookmetamethod(game, "__namecall", function(self,...)
     local Method = getnamecallmethod();
 
     if not checkcaller() then
-        if typeof(self) == "Instance" and Method == "GetFocusedTextBox" and self:IsA("UserInputService") then
+        if typeof(self) == "Instance" and Method == "GetFocusedTextBox" and self.ClassName == "UserInputService" then
             if self:IsDescendantOf(Bypassed_Dex) then
                 return nil;
             else

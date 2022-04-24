@@ -143,17 +143,23 @@ local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function
 end)
 
 -- GetFocusedTextBox Bypass
+local _IsDescendantOf = game.IsDescendantOf
+
 local TextboxBypass
 TextboxBypass = hookmetamethod(game, "__namecall", function(self,...)
-    local Method = getnamecallmethod();
+    local method = getnamecallmethod();
+    local args = ...;
 
     if not checkcaller() then
-        if typeof(self) == "Instance" and Method == "GetFocusedTextBox" and self.ClassName == "UserInputService" then
-            if self:IsDescendantOf(Bypassed_Dex) then
-                return nil;
-            else
-                return TextboxBypass(self,...);
-            end
+        if typeof(self) == "Instance" and method == "GetFocusedTextBox" and self.ClassName == "UserInputService" then
+	    	local Textbox = TextboxBypass(self,...);
+	    	if Textbox and typeof(Textbox) == "Instance" then
+			    local succ,err = pcall(function() _IsDescendantOf(Textbox, Bypassed_Dex) end)
+			    
+			    if err and err:match("The current identity") then
+			    	return nil;
+			    end
+	    	end
         end
     end
 

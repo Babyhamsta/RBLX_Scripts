@@ -30,7 +30,7 @@ local Luminosity = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ba
 -- Main UI Stuff
 local Window = Luminosity.new("Sonic Speed Sim", "By HamstaGang", 1290583218)
 local AutoFarm = Window.Tab("Auto Farm")
-local Worlds = Window.Tab("Worlds")
+local Other = Window.Tab("Worlds")
 
 -- Auto Steps
 local Auto_Steps = AutoFarm.Cheat("Auto Step", "Auto increase steps", function(boolean)
@@ -58,11 +58,13 @@ local Auto_Bank_Rewards = AutoFarm.Cheat("Auto Bank Rewards", "Auto collects ban
 end)
 
 
--- [[ Worlds Tab ]] --
-local WorldsTab = Worlds.Folder("Unlock Worlds", "Unlock all the worlds.")
+-- [[ Other Tab ]] --
+local UnlockWorlds = Other.Folder("Unlock Worlds", "Unlock all the worlds.")
+local UnlockCharacters = Other.Folder("Unlock Characters", "Unlock all the characters.")
+
 
 -- Unlock All Worlds
-local World_Unlock_All = WorldsTab.Button("", "Unlock Worlds", function()
+local World_Unlock_All = OtherTab.Button("", "Unlock Worlds", function()
     local Knit = game:GetService("ReplicatedStorage").Knit;
     local RequestTeleportToZone = Knit.Services.ZoneService.RF.RequestTeleportToZone;
     local CompleteZoneObby = Knit.Services.ZoneService.RF.CompleteZoneObby;
@@ -77,6 +79,28 @@ local World_Unlock_All = WorldsTab.Button("", "Unlock Worlds", function()
     
     RequestTeleportToZone:InvokeServer("Snow Valley Obby", "Emerald Hill Exit")
     CompleteZoneObby:InvokeServer()
+end)
+
+-- Unlock All Characters
+local Character_Unlock_All = OtherTab.Button("", "Unlock Characters", function()
+    local Knit = game:GetService("ReplicatedStorage").Knit;
+    local RequestUnlockCharacter = Knit.Services.CharacterService.RE.RequestUnlockCharacter;
+    local RequestTeleportToZone = Knit.Services.ZoneService.RF.RequestTeleportToZone;
+    local RedeemCode = Knit.Services.RedeemService.RF.RedeemCode;
+    
+    RequestTeleportToZone:InvokeServer("Green Hill")
+    RequestUnlockCharacter:FireServer("sonic")
+    wait(0.3)
+    
+    RequestTeleportToZone:InvokeServer("Lost Valley")
+    RequestUnlockCharacter:FireServer("tails")
+    wait(0.3)
+    
+    RequestTeleportToZone:InvokeServer("Emerald Hill")
+    RequestUnlockCharacter:FireServer("knuckles")
+    wait(0.3)
+    
+    RedeemCode:InvokeServer("riders")
 end)
 
 -- Menu Closing Function

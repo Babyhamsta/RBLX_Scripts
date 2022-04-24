@@ -99,6 +99,17 @@ for i,v in next, getconnections(game.DescendantAdded) do
     v:Disable()
 end
 
+local Content = cloneref(game:GetService("ContentProvider"));
+local CoreGui = cloneref(game:GetService("CoreGui"));
+
+local function RemoveDexTraces(trTable)
+    table.remove(trTable, table.find(trTable, "rbxassetid://472635937"))
+    table.remove(trTable, table.find(trTable, "rbxassetid://476456048"))
+    table.remove(trTable, table.find(trTable, "rbxassetid://1513966937"))
+    table.remove(trTable, table.find(trTable, "rbxassetid://476354004"))
+    table.remove(trTable, table.find(trTable, "rbxassetid://472635774"))
+end
+
 -- ContentProvider Bypass
 local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", (function(self, ...)
@@ -108,8 +119,12 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", (function(self, ...)
     if not checkcaller() then
         if typeof(self) == "Instance" and (method == "preloadAsync" or method == "PreloadAsync") and self:IsA("ContentProvider") then
             if args[1] ~= nil then
-                if type(args[1]) == "table" then
-                    return;
+                local Core = args[1];
+                if type(Core) == "table" then
+                    if Core == CoreGui or Core == game then
+                        pcall(function() RemoveDexTraces(Core) end)
+                        return ContentProviderBypass(self, ...);
+                    end
                 end
             end
         end
@@ -117,6 +132,20 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", (function(self, ...)
 
     return ContentProviderBypass(self, ...);
 end))
+
+-- Preload check, index version of the ContentProvider Bypass
+local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function(a, b, c)
+    if not checkcaller() then
+        if typeof(a) == "Instance" and a == "ContentProvider" and type(b) == "Table" and table.find(b, CoreGui) or table.find(b, game) then
+            if b[1] == CoreGui or b[1] == game then -- Double Check
+                pcall(function() RemoveDexTraces(b) end)
+                return preloadBypass(a, b, c)
+            end
+        end
+    end
+    
+    return preloadBypass(a, b, c)
+end)
 
 -- GetFocusedTextBox Bypass
 local TextboxBypass

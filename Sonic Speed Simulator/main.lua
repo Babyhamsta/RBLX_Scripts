@@ -30,6 +30,7 @@ local Luminosity = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ba
 -- Main UI Stuff
 local Window = Luminosity.new("Sonic Speed Sim", "By HamstaGang", 1290583218)
 local AutoFarm = Window.Tab("Auto Farm")
+local Worlds = Window.Tab("Worlds")
 
 -- Auto Steps
 local Auto_Steps = AutoFarm.Cheat("Auto Step", "Auto increase steps", function(boolean)
@@ -54,6 +55,28 @@ end)
 -- Auto Bank Rewards
 local Auto_Bank_Rewards = AutoFarm.Cheat("Auto Bank Rewards", "Auto collects bank rewards (every 6 hours)", function(boolean)
     AutoBankRewards = boolean;
+end)
+
+
+-- [[ Worlds Tab ]] --
+local WorldsTab = Worlds.Folder("Unlock Worlds", "Unlock all the worlds.")
+
+-- Unlock All Worlds
+local World_Unlock_All = WorldsTab.Button("", "Unlock Worlds", function()
+    local Knit = game:GetService("ReplicatedStorage").Knit;
+    local RequestTeleportToZone = Knit.Services.ZoneService.RF.RequestTeleportToZone;
+    local CompleteZoneObby = Knit.Services.ZoneService.RF.CompleteZoneObby;
+    
+    RequestTeleportToZone:InvokeServer("Lost Valley Obby", "Green Hill Exit")
+    CompleteZoneObby:InvokeServer()
+    wait(0.3)
+    
+    RequestTeleportToZone:InvokeServer("Emerald Hill Obby", "Lost Valley Exit")
+    CompleteZoneObby:InvokeServer()
+    wait(0.3)
+    
+    RequestTeleportToZone:InvokeServer("Snow Valley Obby", "Emerald Hill Exit")
+    CompleteZoneObby:InvokeServer()
 end)
 
 -- Menu Closing Function
@@ -109,7 +132,7 @@ end)
 
 -- Auto Bank Rewards
 spawn(function()
-    while wait(600) do -- You have to wait 6 hours until you can collect again so we check every 10 mins.
+    while wait(5) do -- You have to wait 6 hours until you can collect again so we check every 10 mins.
         if AutoBankRewards then
             local Plr = game:GetService("Players").LocalPlayer;
             local RewardsBanks = game:GetService("Workspace").Map.Collision.RewardBanks;

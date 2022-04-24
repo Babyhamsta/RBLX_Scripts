@@ -30,7 +30,7 @@ local Luminosity = loadstring(game:HttpGet("https://raw.githubusercontent.com/Ba
 -- Main UI Stuff
 local Window = Luminosity.new("Sonic Speed Sim", "By HamstaGang", 1290583218)
 local AutoFarm = Window.Tab("Auto Farm")
-local Other = Window.Tab("Worlds")
+local Other = Window.Tab("Unlocks")
 
 -- Auto Steps
 local Auto_Steps = AutoFarm.Cheat("Auto Step", "Auto increase steps", function(boolean)

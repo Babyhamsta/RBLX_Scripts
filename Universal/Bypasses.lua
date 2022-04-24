@@ -99,47 +99,37 @@ for i,v in next, getconnections(game.DescendantAdded) do
     v:Disable()
 end
 
+-- ContentProvider Bypasses
 local Content = cloneref(game:GetService("ContentProvider"));
 local CoreGui = cloneref(game:GetService("CoreGui"));
 
-local function RemoveDexTraces(trTable)
-    table.remove(trTable, table.find(trTable, "rbxassetid://472635937"))
-    table.remove(trTable, table.find(trTable, "rbxassetid://476456048"))
-    table.remove(trTable, table.find(trTable, "rbxassetid://1513966937"))
-    table.remove(trTable, table.find(trTable, "rbxassetid://476354004"))
-    table.remove(trTable, table.find(trTable, "rbxassetid://472635774"))
+local tbl = {}
+for i,v in pairs(CoreGui:GetDescendants()) do
+    if v.IsA(v, "ImageLabel") and not v.Image:find('rbxasset://') then
+        table.insert(tbl, v.Image)
+    end
 end
 
--- ContentProvider Bypass
 local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", (function(self, ...)
-    local method = getnamecallmethod();
-    local args = ...;
-
     if not checkcaller() then
         if typeof(self) == "Instance" and (method == "preloadAsync" or method == "PreloadAsync") and self.ClassName == "ContentProvider" then
             if args[1] ~= nil then
-                local Core = args[1];
-                if type(Core) == "table" then
-                    if Core == CoreGui or Core == game then
-                        pcall(function() RemoveDexTraces(Core) end)
-                        return ContentProviderBypass(self, ...);
-                    end
+                if type(args[1]) == "table" then
+                    return;
                 end
             end
         end
-    end
-
     return ContentProviderBypass(self, ...);
 end))
 
--- Preload check, index version of the ContentProvider Bypass
 local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function(a, b, c)
     if not checkcaller() then
-        if typeof(a) == "Instance" and a == "ContentProvider" and type(b) == "Table" and table.find(b, CoreGui) or table.find(b, game) then
-            if b[1] == CoreGui or b[1] == game then -- Double Check
-                pcall(function() RemoveDexTraces(b) end)
-                return preloadBypass(a, b, c)
+        if typeof(a) == "Instance" and tostring(a) == "ContentProvider" and typeof(b) == "table" then
+            if table.find(b, CoreGui) or table.find(b, game) then
+                if b[1] == CoreGui or b[1] == game then -- Double Check
+                    return preloadBypass(a, tbl, c)
+                end
             end
         end
     end

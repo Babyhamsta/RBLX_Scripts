@@ -111,13 +111,14 @@ for i,v in pairs(CoreGui:GetDescendants()) do
         table.insert(coreguiTable, v.Image)
     end
 end
+
 local gameTable = {}
 
 for i, v in pairs(game:GetDescendants()) do
     if v:IsA("ImageLabel") then
-	    if v.Image:find('rbxassetid://') and v:IsDescendantOf(game.CoreGui) then else
-	            table.insert(gameTable, v.Image)
-	     end
+        if v.Image:find('rbxassetid://') and v:IsDescendantOf(game.CoreGui) then else
+            table.insert(gameTable, v.Image)
+        end
     end
 end
 
@@ -126,7 +127,7 @@ local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, Instances, ...)
     local method = getnamecallmethod();
     local args = ...;
-    
+
     if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") then
         if self.ClassName == "ContentProvider" then
             if Instances ~= nil then
@@ -143,7 +144,7 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, Instan
             end
         end
     end
-    
+
     return ContentProviderBypass(self, Instances, ...)
 end)
 
@@ -152,10 +153,10 @@ local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function
         if typeof(a) == "Instance" and tostring(a) == "ContentProvider" and typeof(b) == "table" then
             if table.find(b, CoreGui) or table.find(b, game) then
                 if b[1] == CoreGui then -- Double Check
-			        return preloadBypass(a, coreguiTable, c)
+                    return preloadBypass(a, coreguiTable, c)
                 end
-		        if b[1] == game then -- Triple Check
-			        return preloadBypass(a, gameTable, c)
+                if b[1] == game then -- Triple Check
+                    return preloadBypass(a, gameTable, c)
                 end
             end
         end
@@ -175,14 +176,14 @@ TextboxBypass = hookmetamethod(game, "__namecall", function(self,...)
 
     if not checkcaller() then
         if typeof(self) == "Instance" and method == "GetFocusedTextBox" and self.ClassName == "UserInputService" then
-	    	local Textbox = TextboxBypass(self,...);
-	    	if Textbox and typeof(Textbox) == "Instance" then
-			    local succ,err = pcall(function() _IsDescendantOf(Textbox, Bypassed_Dex) end)
-			    
-			    if err and err:match("The current identity") then
-			    	return nil;
-			    end
-	    	end
+            local Textbox = TextboxBypass(self,...);
+            if Textbox and typeof(Textbox) == "Instance" then
+                local succ,err = pcall(function() _IsDescendantOf(Textbox, Bypassed_Dex) end)
+
+                if err and err:match("The current identity") then
+                    return nil;
+                end
+            end
         end
     end
 

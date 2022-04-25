@@ -64,7 +64,7 @@ local UnlockCharacters = Other.Folder("Unlock Characters", "Unlock all the chara
 
 
 -- Unlock All Worlds
-local World_Unlock_All = OtherTab.Button("", "Unlock Worlds", function()
+local World_Unlock_All = UnlockWorlds.Button("", "Unlock Worlds", function()
     local Knit = game:GetService("ReplicatedStorage").Knit;
     local RequestTeleportToZone = Knit.Services.ZoneService.RF.RequestTeleportToZone;
     local CompleteZoneObby = Knit.Services.ZoneService.RF.CompleteZoneObby;
@@ -82,7 +82,7 @@ local World_Unlock_All = OtherTab.Button("", "Unlock Worlds", function()
 end)
 
 -- Unlock All Characters
-local Character_Unlock_All = OtherTab.Button("", "Unlock Characters", function()
+local Character_Unlock_All = UnlockCharacters.Button("", "Unlock Characters", function()
     local Knit = game:GetService("ReplicatedStorage").Knit;
     local RequestUnlockCharacter = Knit.Services.CharacterService.RE.RequestUnlockCharacter;
     local RequestTeleportToZone = Knit.Services.ZoneService.RF.RequestTeleportToZone;

@@ -103,37 +103,59 @@ end
 local Content = cloneref(game:GetService("ContentProvider"));
 local CoreGui = cloneref(game:GetService("CoreGui"));
 
-local tbl = {}
+
+local coreguiTable = {}
+
 for i,v in pairs(CoreGui:GetDescendants()) do
-    if v.IsA(v, "ImageLabel") and not v.Image:find('rbxasset://') then
-        table.insert(tbl, v.Image)
+    if v:IsA("ImageLabel") and v.Image:find('rbxasset://') then
+        table.insert(coreguiTable, v.Image)
+    end
+end
+local gameTable = {}
+
+for i, v in pairs(game:GetDescendants()) do
+    if v:IsA("ImageLabel") then
+	    if v.Image:find('rbxassetid://') and v:IsDescendantOf(game.CoreGui) then else
+	            table.insert(gameTable, v.Image)
+	     end
     end
 end
 
+
 local ContentProviderBypass
-ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, ...)
+ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, Instances, ...)
     local method = getnamecallmethod();
     local args = ...;
     
     if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") then
         if self.ClassName == "ContentProvider" then
-            if args[1] ~= nil then
-                if typeof(args[1]) == "Instance" then
-                    return;
+            if Instances ~= nil then
+                if typeof(Instances) == "Instance"then
+                    if Instances == game.CoreGui then
+                        Instances = coreguiTable
+                        return ContentProviderBypass(self, Instances, ...)
+                    end
+                    if args[1] == game then
+                        Instances = gameTable
+                        return ContentProviderBypass(self, unpack(args))
+                    end
                 end
             end
         end
     end
     
-    return ContentProviderBypass(self, ...)
+    return ContentProviderBypass(self, Instances, ...)
 end)
 
 local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function(a, b, c)
     if not checkcaller() then
         if typeof(a) == "Instance" and tostring(a) == "ContentProvider" and typeof(b) == "table" then
             if table.find(b, CoreGui) or table.find(b, game) then
-                if b[1] == CoreGui or b[1] == game then -- Double Check
-                    return preloadBypass(a, tbl, c)
+                if b[1] == CoreGui then -- Double Check
+			        return preloadBypass(a, coreguiTable, c)
+                end
+		        if b[1] == game then -- Triple Check
+			        return preloadBypass(a, gameTable, c)
                 end
             end
         end
@@ -141,6 +163,7 @@ local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function
 
     return preloadBypass(a, b, c)
 end)
+
 
 -- GetFocusedTextBox Bypass
 local _IsDescendantOf = game.IsDescendantOf

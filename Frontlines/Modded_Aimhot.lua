@@ -1988,13 +1988,30 @@ end
 
 -- // Game Mod functions
 
+
 -- / Util Vars
-local Utils = getrenv()._G.utils
-local TASK_ENUM = Utils.gbus.TASK_ENUM
-local EVENT_ENUM = Utils.gbus.EVENT_ENUM
+local TASK_ENUM;
+local EVENT_ENUM;
+
+-- // Grab data from GC.
+for i,v in next, getgc(true) do 
+    if typeof(v) == "table" and rawget(v,"gbus") then
+        TASK_ENUM = v.gbus.TASK_ENUM;
+        EVENT_ENUM = v.gbus.EVENT_ENUM;
+    end
+end
 
 -- / Task Scheduler Vars
-local task_scheduler = require(game:GetService("ReplicatedStorage")["framework_shared"]["task_scheduler"])
+
+-- Grab task_scheduler from NIL
+local task_scheduler;
+for i,v in next, getnilinstances() do
+    if v:IsA("ModuleScript") and v.Name == "task_scheduler" then
+        task_scheduler = v;
+    end
+end
+
+local task_scheduler = require(task_scheduler)
 local upvalues = getupvalues(task_scheduler.add_task)
 
 -- // Task Hook Function

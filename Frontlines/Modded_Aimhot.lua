@@ -19,7 +19,7 @@
 ]]
 
 -- Character Patch (Stefanuk12 | Modded by HamstaGang) [Fixes teams/teamcolor/ect]
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Stefanuk12/ROBLOX/master/Games/Frontlines/CharacterPatch.lua", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Frontlines/CharacterPatch.lua", true))()
 
 
 -- Extremly bad code starts below here

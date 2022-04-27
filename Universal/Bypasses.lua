@@ -36,7 +36,8 @@ spawn(function()
         return floor(OldGcInfo + Formula)
     end)
     local Old2; Old2 = hookfunction(collectgarbage, function(arg, ...)
-        if arg == "collect" then
+        local suc, err = pcall(Old2, arg, ...)
+        if suc and arg == "collect" then
             return gcinfo(...)
         end
         return Old2(arg, ...)

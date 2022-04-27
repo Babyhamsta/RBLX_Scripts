@@ -19,6 +19,9 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scrip
 getgenv().Bypassed_Dex = game:GetObjects("rbxassetid://9352453730")[1]
 math.randomseed(tick())
 
+-- CoreGui
+local CoreGui = cloneref(game:GetService("CoreGui"))
+
 local charset = {}
 for i = 48,  57 do table.insert(charset, string.char(i)) end
 for i = 65,  90 do table.insert(charset, string.char(i)) end
@@ -61,7 +64,7 @@ if getcustomasset and readfile then
 		pcall(function()
 			local o = base64decode(game:GetObjects("rbxassetid://6325145856")[1].x.Source)
 			writefile("cx.ogg",o)
-			local s = Instance.new("Sound",game:GetService("CoreGui"))
+			local s = Instance.new("Sound", CoreGui)
 			s.Name = game:GetService("HttpService"):GenerateGUID()
 			s.SoundId = getcustomasset("cx.ogg")
 			s.Volume = 2

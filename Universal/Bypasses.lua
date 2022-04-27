@@ -104,6 +104,8 @@ end
 local Content = cloneref(game:GetService("ContentProvider"));
 local CoreGui = cloneref(game:GetService("CoreGui"));
 
+local randomizedCoreGuiTable;
+local randomizedGameTable;
 
 local coreguiTable = {}
 
@@ -123,6 +125,15 @@ for i, v in pairs(game:GetDescendants()) do
     end
 end
 
+function randomizeTable(t)
+    local n = #t
+    while n > 0 do
+        local k = math.random(n)
+        t[n], t[k] = t[k], t[n]
+        n = n - 1
+    end
+    return t
+end
 
 local ContentProviderBypass
 ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, Instances, ...)
@@ -130,16 +141,17 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, Instan
     local args = ...;
 
     if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") then
-        if self.ClassName == "ContentProvider" then
+        if Instances and Instances[1] and self.ClassName == "ContentProvider" then
             if Instances ~= nil then
-                if typeof(Instances) == "Instance"then
-                    if Instances == game.CoreGui then
-                        Instances = coreguiTable
-                        return ContentProviderBypass(self, Instances, ...)
+                if typeof(Instances[1]) == "Instance" then
+                    if Instances[1] == game.CoreGui then
+                        randomizedCoreGuiTable = randomizeTable(coreguiTable)
+                        return ContentProviderBypass(self, randomizedCoreGuiTable, ...)
                     end
-                    if args[1] == game then
-                        Instances = gameTable
-                        return ContentProviderBypass(self, unpack(args))
+        
+                    if Instances[1] == game then
+                        randomizedGameTable = randomizeTable(gameTable)
+                        return ContentProviderBypass(self, randomizedGameTable, ...)
                     end
                 end
             end
@@ -154,10 +166,12 @@ local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function
         if typeof(a) == "Instance" and tostring(a) == "ContentProvider" and typeof(b) == "table" then
             if table.find(b, CoreGui) or table.find(b, game) then
                 if b[1] == CoreGui then -- Double Check
-                    return preloadBypass(a, coreguiTable, c)
+                    randomizedCoreGuiTable = randomizeTable(coreguiTable)
+                    return preloadBypass(a, randomizedCoreGuiTable, c)
                 end
                 if b[1] == game then -- Triple Check
-                    return preloadBypass(a, gameTable, c)
+                    randomizedGameTable = randomizeTable(gameTable)
+                    return preloadBypass(a, randomizedGameTable, c)
                 end
             end
         end
@@ -165,7 +179,6 @@ local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function
 
     return preloadBypass(a, b, c)
 end)
-
 
 -- GetFocusedTextBox Bypass
 local _IsDescendantOf = game.IsDescendantOf

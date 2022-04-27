@@ -12,7 +12,6 @@ DecendantAdded Disabler
 CloneRef (Overall protection of Instances and other UserData)
 ]]
 
-
 -- Dex Bypasses
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/Bypasses.lua", true))()
 
@@ -32,8 +31,27 @@ function RandomCharacters(length)
   end
 end
 
-Bypassed_Dex.Name = RandomCharacters(math.random(5, 20))
-Bypassed_Dex.Parent = game:GetService("CoreGui")
+-- Sorry I have to for better protection :( (Rip if your exploit doesn't support)
+local protectGui;
+
+if syn then
+    protectGui = syn.protect_gui or protectgui or gethui
+    if protectGui then
+        Bypassed_Dex.Name = RandomCharacters(math.random(5, 20));
+        protectGui(Bypassed_Dex);
+        Bypassed_Dex.Parent = CoreGui;
+    else
+        game:Shutdown();
+    end
+else
+    protectGui = protectgui or gethui
+    if protectGui then
+        Bypassed_Dex.Name = RandomCharacters(math.random(5, 20));
+        Bypassed_Dex.Parent = protectGui();
+    else
+        game:Shutdown();
+    end
+end
 
 getcustomasset = getsynasset or getcustomasset
 base64decode = syn_crypt_b64_decode or (crypt and crypt.base64decode)

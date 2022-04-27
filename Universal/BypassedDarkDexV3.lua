@@ -2,7 +2,6 @@
 
 --[[
 This script has many bypasses to keep DEX secured.
-
 NewProxy Bypass
 GetGC Spoof
 Memory Spoof

@@ -18,9 +18,6 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scrip
 getgenv().Bypassed_Dex = game:GetObjects("rbxassetid://9352453730")[1]
 math.randomseed(tick())
 
--- CoreGui
-local CoreGui = cloneref(game:GetService("CoreGui"))
-
 local charset = {}
 for i = 48,  57 do table.insert(charset, string.char(i)) end
 for i = 65,  90 do table.insert(charset, string.char(i)) end
@@ -33,27 +30,8 @@ function RandomCharacters(length)
   end
 end
 
--- Sorry I have to for better protection :( (Rip if your exploit doesn't support)
-local protectGui;
-
-if syn then
-    protectGui = syn.protect_gui or protectgui or gethui
-    if protectGui then
-        Bypassed_Dex.Name = RandomCharacters(math.random(5, 20));
-        protectGui(Bypassed_Dex);
-        Bypassed_Dex.Parent = CoreGui;
-    else
-        game:Shutdown();
-    end
-else
-    protectGui = protectgui or gethui
-    if protectGui then
-        Bypassed_Dex.Name = RandomCharacters(math.random(5, 20));
-        Bypassed_Dex.Parent = protectGui();
-    else
-        game:Shutdown();
-    end
-end
+Bypassed_Dex.Name = RandomCharacters(math.random(5, 20))
+Bypassed_Dex.Parent = game:GetService("CoreGui")
 
 getcustomasset = getsynasset or getcustomasset
 base64decode = syn_crypt_b64_decode or (crypt and crypt.base64decode)
@@ -63,7 +41,7 @@ if getcustomasset and readfile then
 		pcall(function()
 			local o = base64decode(game:GetObjects("rbxassetid://6325145856")[1].x.Source)
 			writefile("cx.ogg",o)
-			local s = Instance.new("Sound", CoreGui)
+			local s = Instance.new("Sound",game:GetService("CoreGui"))
 			s.Name = game:GetService("HttpService"):GenerateGUID()
 			s.SoundId = getcustomasset("cx.ogg")
 			s.Volume = 2

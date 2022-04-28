@@ -142,7 +142,7 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, Instan
     if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") then
         if Instances and Instances[1] and self.ClassName == "ContentProvider" then
             if Instances ~= nil then
-                if typeof(Instances[1]) == "Instance" and (table.find(Instances, coreGuiService) or table.find(Instances, game)) and not (table.find(b, true) or table.find(b, false)) then
+                if typeof(Instances[1]) == "Instance" and (table.find(Instances, coreGuiService) or table.find(Instances, game)) then
                     if Instances[1] == coreGuiService then
                         randomizedCoreGuiTable = randomizeTable(coreguiTable)
                         return ContentProviderBypass(self, randomizedCoreGuiTable, ...)

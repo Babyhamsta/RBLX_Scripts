@@ -6,11 +6,15 @@ getrenv().AutoStep = false;
 getrenv().AutoRebirth = false;
 getrenv().AutoCollect = false;
 getrenv().AutoBankRewards = false;
+getrenv().AutoRaceWin = false;
 
--- Random Locals
+-- Services
 local Players = game:GetService("Players");
 local TweenService = game:GetService("TweenService");
 local RunService = game:GetService("RunService");
+local Knit = require(game:GetService("ReplicatedStorage").Knit)
+
+-- Random Locals
 local RootPart = Players.LocalPlayer.Character:WaitForChild("HumanoidRootPart");
 local TweenData = TweenInfo.new(math.random(1,99), Enum.EasingStyle.Linear);
 local Rand = math.random(1,999999999);
@@ -55,6 +59,11 @@ end)
 -- Auto Bank Rewards
 local Auto_Bank_Rewards = AutoFarm.Cheat("Auto Bank Rewards", "Auto collects bank rewards (every 6 hours)", function(boolean)
     AutoBankRewards = boolean;
+end)
+
+-- Auto Race Win
+local Auto_Race_Win = AutoFarm.Cheat("Auto Race Win", "Auto joins and wins races.", function(boolean)
+    AutoRaceWin = boolean;
 end)
 
 
@@ -168,5 +177,24 @@ spawn(function()
                 end
             end
         end
+    end
+end)
+
+-- Auto Race Win (We use the in-game funcs *troll*)
+local CharacterService = Knit.GetService("CharacterService");
+local RaceService = Knit.GetService("RaceService");
+local RaceController = Knit.GetController("RaceController");
+
+RaceService.RaceStarting:Connect(function(GUID)
+    if AutoRaceWin then
+        local RaceEnd = game:GetService("Workspace").Map.Triggers:WaitForChild("RaceEndZone")
+        wait(6.5) -- Wait for race to start
+        CharacterService.CharacterTouchedTrigger:Fire(tostring(RaceEnd:GetAttribute("GUID")));
+    end
+end);
+
+RaceService.PromptRace:Connect(function(idek, GUID)
+    if AutoRaceWin then
+        RaceService.JoinRace:Fire(GUID);
     end
 end)

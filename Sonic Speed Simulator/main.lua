@@ -7,6 +7,7 @@ getrenv().AutoRebirth = false;
 getrenv().AutoCollect = false;
 getrenv().AutoBankRewards = false;
 getrenv().AutoRaceWin = false;
+getrenv().AutoCollectShards = false;
 
 -- Services
 local Players = game:GetService("Players");
@@ -64,6 +65,11 @@ end)
 -- Auto Race Win
 local Auto_Race_Win = AutoFarm.Cheat("Auto Race Win", "Auto joins and wins races.", function(boolean)
     AutoRaceWin = boolean;
+end)
+
+-- Auto Collect Shards
+local Auto_Collect_Shards = AutoFarm.Cheat("Auto Collect Shards", "Teleports all Shards (aka Character Fragments) to you upon their spawning.", function(boolean)
+    AutoCollectShards = boolean;
 end)
 
 
@@ -198,3 +204,23 @@ RaceService.PromptRace:Connect(function(idek, GUID)
         RaceService.JoinRace:Fire(GUID);
     end
 end)
+
+-- Auto Collect Shards
+local CharacterShardService = Knit.GetService("CharacterShardService");
+
+CharacterShardService.SpawnCharacterShards:Connect(function(ShardData, Shards)
+    if AutoCollectShards then
+        local ShardName = ShardData["ShardName"];
+        local CurrentZone = ShardData["CurrentZone"];
+        
+    	for _,Shard in pairs(Shards) do
+    	    local Objects = game:GetService("Workspace"):WaitForChild("Map").Objects;
+            local GUID = Shard["GUID"];
+            --local UnlockZone = Shard["UnlockZone"];
+            
+            pcall(function()
+                Objects[GUID].Card.CFrame = RootPart.CFrame;
+            end)
+    	end
+    end
+end);

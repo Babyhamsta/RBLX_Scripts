@@ -61,7 +61,7 @@ spawn(function()
     local RandomTimeValue = math.random(RandomTime[1],RandomTime[2])/10000
 
     --I can make it 0.003 seconds faster, yea, sure
-    while wait(RandomTime) do
+    while task.wait(RandomTime) do
         Amplitude = math.random(old1+RandomValue[1], old1+RandomValue[2])
         RandomTimeValue = math.random(RandomTime[1],RandomTime[2])/10000
     end

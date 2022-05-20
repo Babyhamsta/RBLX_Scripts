@@ -112,13 +112,12 @@ end
 -- ContentProvider Bypasses
 local Content = cloneref(game:GetService("ContentProvider"));
 local CoreGui = cloneref(game:GetService("CoreGui"));
-local coreGuiService = game.GetService(game, "CoreGui")
 local randomizedCoreGuiTable;
 local randomizedGameTable;
 
 local coreguiTable = {}
 
-game:GetService("ContentProvider"):PreloadAsync({coreGuiService}, function(assetId) --use preloadasync to patch preloadasync :troll:
+game:GetService("ContentProvider"):PreloadAsync({CoreGui}, function(assetId) --use preloadasync to patch preloadasync :troll:
     if not assetId:find("rbxassetid://") then
         table.insert(coreguiTable, assetId)
 end
@@ -127,7 +126,7 @@ local gameTable = {}
 
 for i, v in pairs(game:GetDescendants()) do
     if v:IsA("ImageLabel") then
-        if v.Image:find('rbxassetid://') and v:IsDescendantOf(coreGuiService) then else
+        if v.Image:find('rbxassetid://') and v:IsDescendantOf(CoreGui) then else
             table.insert(gameTable, v.Image)
         end
     end
@@ -151,8 +150,8 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, Instan
     if not checkcaller() and (method == "preloadAsync" or method == "PreloadAsync") then
         if Instances and Instances[1] and self.ClassName == "ContentProvider" then
             if Instances ~= nil then
-                if typeof(Instances[1]) == "Instance" and (table.find(Instances, coreGuiService) or table.find(Instances, game)) then
-                    if Instances[1] == coreGuiService then
+                if typeof(Instances[1]) == "Instance" and (table.find(Instances, CoreGui) or table.find(Instances, game)) then
+                    if Instances[1] == CoreGui then
                         randomizedCoreGuiTable = randomizeTable(coreguiTable)
                         return ContentProviderBypass(self, randomizedCoreGuiTable, ...)
                     end
@@ -172,8 +171,8 @@ end)
 local preloadBypass; preloadBypass = hookfunction(Content.PreloadAsync, function(a, b, c)
     if not checkcaller() then
         if typeof(a) == "Instance" and tostring(a) == "ContentProvider" and typeof(b) == "table" then
-            if (table.find(b, coreGuiService) or table.find(b, game)) and not (table.find(b, true) or table.find(b, false)) then
-                if b[1] == coreGuiService then -- Double Check
+            if (table.find(b, CoreGui) or table.find(b, game)) and not (table.find(b, true) or table.find(b, false)) then
+                if b[1] == CoreGui then -- Double Check
                     randomizedCoreGuiTable = randomizeTable(coreguiTable)
                     return preloadBypass(a, randomizedCoreGuiTable, c)
                 end

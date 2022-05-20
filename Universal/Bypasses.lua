@@ -1,4 +1,4 @@
--- Pretty much just a bunch of know detection bypasses. (Big thanks to Lego Hacker, Modulus, and Bluwu)
+-- Pretty much just a bunch of know detection bypasses. (Big thanks to Lego Hacker, Modulus, Bluwu, and I guess Iris or something)
 
 -- GCInfo/CollectGarbage Bypass (Realistic by Lego - Amazing work!)
 spawn(function()

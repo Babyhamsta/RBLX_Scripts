@@ -71,9 +71,9 @@ end)
 spawn(function()
     repeat task.wait() until game:IsLoaded()
 
-    local RunService = game:GetService("RunService")
+    local RunService = cloneref(game:GetService("RunService"))
+    local Stats = cloneref(game:GetService("Stats"))
 
-    local Stats = game:GetService("Stats")
     local CurrMem = Stats:GetTotalMemoryUsageMb();
     local Rand = 0
 
@@ -92,6 +92,15 @@ spawn(function()
         end
 
         return _MemBypass(self,...)
+    end)
+
+    -- Indexed Version
+    local _MemBypassIndex; _MemBypassIndex = hookfunction(Stats.GetTotalMemoryUsageMb, function(self, ...)
+        if not checkcaller() then
+            if typeof(self) == "Instance" and tostring(self) == "Stats" and self.ClassName == "Stats" then
+                return CurrMem + Rand;
+            end
+        end
     end)
 end)
 
@@ -112,7 +121,7 @@ local coreguiTable = {}
 game:GetService("ContentProvider"):PreloadAsync({coreGuiService}, function(assetId) --use preloadasync to patch preloadasync :troll:
     if not assetId:find("rbxassetid://") then
         table.insert(coreguiTable, assetId)
-    end
+end
 end)
 local gameTable = {}
 
@@ -147,7 +156,7 @@ ContentProviderBypass = hookmetamethod(game, "__namecall", function(self, Instan
                         randomizedCoreGuiTable = randomizeTable(coreguiTable)
                         return ContentProviderBypass(self, randomizedCoreGuiTable, ...)
                     end
-        
+
                     if Instances[1] == game then
                         randomizedGameTable = randomizeTable(gameTable)
                         return ContentProviderBypass(self, randomizedGameTable, ...)

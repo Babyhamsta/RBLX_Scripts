@@ -104,11 +104,6 @@ spawn(function()
     end)
 end)
 
--- DecendantAdded Bypass
-for i,v in next, getconnections(game.DescendantAdded) do
-    v:Disable()
-end
-
 -- ContentProvider Bypasses
 local Content = cloneref(game:GetService("ContentProvider"));
 local CoreGui = cloneref(game:GetService("CoreGui"));

@@ -86,7 +86,7 @@ spawn(function()
         local method = getnamecallmethod();
 
         if not checkcaller() then
-            if typeof(self) == "Instance" and method:lower() == "gettotalmemoryusagemb" and self.ClassName == "Stats" then
+            if typeof(self) == "Instance" and (method == "GetTotalMemoryUsageMb" or method == "getTotalMemoryUsageMb") and self.ClassName == "Stats" then
                 return CurrMem + Rand;
             end
         end
@@ -96,15 +96,6 @@ spawn(function()
 
     -- Indexed Versions
     local _MemBypassIndex; _MemBypassIndex = hookfunction(Stats.GetTotalMemoryUsageMb, function(self, ...)
-        if not checkcaller() then
-            if typeof(self) == "Instance" and self.ClassName == "Stats" then
-                return CurrMem + Rand;
-            end
-        end
-    end)
-
-    -- Why does ROBLOX have 90 funcs that are just the front letter case. There should only be one way to call this stuff..
-    local _MemBypassIndex; _MemBypassIndex = hookfunction(Stats.getTotalMemoryUsageMb, function(self, ...)
         if not checkcaller() then
             if typeof(self) == "Instance" and self.ClassName == "Stats" then
                 return CurrMem + Rand;

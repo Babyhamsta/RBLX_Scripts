@@ -86,7 +86,7 @@ spawn(function()
         local method = getnamecallmethod();
 
         if not checkcaller() then
-            if typeof(self) == "Instance" and method == "GetTotalMemoryUsageMb" and self.ClassName == "Stats" then
+            if typeof(self) == "Instance" and method:lower() == "gettotalmemoryusagemb" and self.ClassName == "Stats" then
                 return CurrMem + Rand;
             end
         end
@@ -94,10 +94,20 @@ spawn(function()
         return _MemBypass(self,...)
     end)
 
-    -- Indexed Version
+    -- Indexed Versions
     local _MemBypassIndex; _MemBypassIndex = hookfunction(Stats.GetTotalMemoryUsageMb, function(self, ...)
         if not checkcaller() then
-            if typeof(self) == "Instance" and tostring(self) == "Stats" and self.ClassName == "Stats" then
+            if typeof(self) == "Instance" and self.ClassName == "Stats" then
+                return CurrMem + Rand;
+            end
+        end
+    end)
+end)
+
+ -- Why does ROBLOX have 90 funcs that are just the front letter case. There should only be one way to call this stuff..
+ local _MemBypassIndex; _MemBypassIndex = hookfunction(Stats.getTotalMemoryUsageMb, function(self, ...)
+        if not checkcaller() then
+            if typeof(self) == "Instance" and self.ClassName == "Stats" then
                 return CurrMem + Rand;
             end
         end
@@ -114,8 +124,8 @@ local coreguiTable = {}
 
 game:GetService("ContentProvider"):PreloadAsync({CoreGui}, function(assetId) --use preloadasync to patch preloadasync :troll:
     if not assetId:find("rbxassetid://") then
-        table.insert(coreguiTable, assetId)
-end
+        table.insert(coreguiTable, assetId);
+    end
 end)
 local gameTable = {}
 

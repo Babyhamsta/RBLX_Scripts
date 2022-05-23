@@ -102,10 +102,9 @@ spawn(function()
             end
         end
     end)
-end)
 
- -- Why does ROBLOX have 90 funcs that are just the front letter case. There should only be one way to call this stuff..
- local _MemBypassIndex; _MemBypassIndex = hookfunction(Stats.getTotalMemoryUsageMb, function(self, ...)
+    -- Why does ROBLOX have 90 funcs that are just the front letter case. There should only be one way to call this stuff..
+    local _MemBypassIndex; _MemBypassIndex = hookfunction(Stats.getTotalMemoryUsageMb, function(self, ...)
         if not checkcaller() then
             if typeof(self) == "Instance" and self.ClassName == "Stats" then
                 return CurrMem + Rand;
@@ -125,7 +124,7 @@ local coreguiTable = {}
 game:GetService("ContentProvider"):PreloadAsync({CoreGui}, function(assetId) --use preloadasync to patch preloadasync :troll:
     if not assetId:find("rbxassetid://") then
         table.insert(coreguiTable, assetId);
-    end
+end
 end)
 local gameTable = {}
 

@@ -44,14 +44,14 @@ local function Load(Obj, Url)
         local Fenv = {}
         local RealFenv = {script = Script}
         local FenvMt = {}
-        FenvMt.__index = function(a,b)
+        function FenvMt:__index(b)
             if RealFenv[b] == nil then
                 return getfenv()[b]
             else
                 return RealFenv[b]
             end
         end
-        FenvMt.__newindex = function(a, b, c)
+        function FenvMt:__newindex(b, c)
             if RealFenv[b] == nil then
                 getfenv()[b] = c
             else
@@ -62,16 +62,16 @@ local function Load(Obj, Url)
         setfenv(Func, Fenv)
         return Func
     end
-
+    
     local function LoadScripts(Script)
         if Script.ClassName == "Script" or Script.ClassName == "LocalScript" then
-            spawn(GiveOwnGlobals(loadstring(Script.Source, "=" .. Script:GetFullName()), Script))
+            task.spawn(GiveOwnGlobals(loadstring(Script.Source, "=" .. Script:GetFullName()), Script))
         end
-        for i,v in pairs(Script:GetChildren()) do
+        for _,v in ipairs(Script:GetChildren()) do
             LoadScripts(v)
         end
     end
-
+    
     LoadScripts(Obj)
 end
 

@@ -33,7 +33,11 @@ function RandomCharacters(length)
 end
 
 Bypassed_Dex.Name = RandomCharacters(math.random(5, 20))
-Bypassed_Dex.Parent = cloneref(game:GetService("CoreGui"))
+if gethui then
+    Bypassed_Dex.Parent = gethui();
+else
+    Bypassed_Dex.Parent = cloneref(game:GetService("CoreGui"))
+end
 
 local function Load(Obj, Url)
     local function GiveOwnGlobals(Func, Script)

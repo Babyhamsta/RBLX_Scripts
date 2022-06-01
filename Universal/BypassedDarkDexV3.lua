@@ -1,16 +1,3 @@
---[[ Dex Loader by cirmolddry#2299 || Modded by HamstaGang ]]
-
---[[
-This script has many bypasses to keep DEX secured.
-NewProxy Bypass
-GetGC Spoof
-Memory Spoof
-ContentProvider Bypass
-GetFocusedTextBox Bypass
-DecendantAdded Disabler
-CloneRef (Overall protection of Instances and other UserData)
-]]
-
 -- Cloneref support (adds support for JJsploit/Temple/Electron and other sploits that don't have cloneref or really shit versions of it.)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/CloneRef.lua", true))()
 

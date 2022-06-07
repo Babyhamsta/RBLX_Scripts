@@ -39,12 +39,12 @@ local function WalkToObject(object)
 				IsWalking = false;
 				break;
 			end
-			
+
 			-- Detect if needing to jump
 			if wap.Action == Enum.PathWaypointAction.Jump then
 				Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 			end
-			
+
 			-- Move to Waypoint
 			Humanoid:MoveTo(wap.Position);
 			Humanoid.MoveToFinished:Wait(); -- Wait for us to get to Waypoint
@@ -74,7 +74,7 @@ end
 -- Walk to the Plr
 local function WalkToPlr()
 	IsWalking = false;
-	
+
 	-- Get Closest Plr
 	ClosestPlr = getClosestPlr();
 
@@ -110,7 +110,7 @@ Humanoid.Running:Connect(function(speed)
 		stuckamt = stuckamt + 1;
 		if stuckamt >= 5 then
 			print("[HG_Bot] - Got stuck, recalculating path..")
-			suckamt = 0;
+			stuckamt = 0;
 			WalkToPlr();
 			task.wait(1.5)
 		end
@@ -120,7 +120,7 @@ end)
 -- Reset on Death
 Plr.CharacterAdded:Connect(function(charmod)
 	charmod:WaitForChild("Humanoid").Died:Connect(function()
-		plr.CharacterAdded:Wait()
+		Plr.CharacterAdded:Wait()
 		print("[HG_Bot] - Died, recalculating path..")
 		WalkToPlr();
 	end)

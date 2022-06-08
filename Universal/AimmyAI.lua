@@ -109,7 +109,7 @@ Humanoid.Running:Connect(function(speed)
 	if speed < 3 and Humanoid.Health > 0 and Humanoid.WalkSpeed > 0 then
 		stuckamt = stuckamt + 1;
 		if stuckamt >= 5 then
-			print("[HG_Bot] - Got stuck, recalculating path..")
+			print("[Aimmy] - Got stuck, recalculating path..")
 			stuckamt = 0;
 			WalkToPlr();
 			task.wait(1.5)
@@ -121,7 +121,7 @@ end)
 Plr.CharacterAdded:Connect(function(charmod)
 	charmod:WaitForChild("Humanoid").Died:Connect(function()
 		Plr.CharacterAdded:Wait()
-		print("[HG_Bot] - Died, recalculating path..")
+		print("[Aimmy] - Died, recalculating path..")
 		WalkToPlr();
 	end)
 end)

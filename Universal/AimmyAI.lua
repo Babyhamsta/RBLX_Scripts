@@ -35,7 +35,7 @@ local function WalkToObject(object)
 		for i, wap in pairs(waypoints) do
 			-- Catcher
 			if not IsWalking or object == nil or Humanoid.Health <= 0 then
-				print("[HG_Bot] - Breaking waypoint loop..") 
+				print("[Aimmy] - Breaking waypoint loop..") 
 				IsWalking = false;
 				break;
 			end

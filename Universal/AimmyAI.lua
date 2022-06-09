@@ -41,7 +41,7 @@ local function Aimlock()
 		Camera.CFrame = CFrame.new(Camera.CFrame.p, ClosestPlr.Character["Head"].Position) --+ ClosestPlr.Character["Head"].Velocity/Predict)
 
 		-- Trigger Bot
-		if IsBehindWall(ClosestPlr.Character["Head"].Position,{Char,ClosestPlr.Character}) then
+		if IsBehindWall(ClosestPlr.Character["Head"].Position,{Char,ClosestPlr.Character}) then			
 			-- Mouse down and back up
 			VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
 			task.wait()
@@ -65,7 +65,7 @@ local function WalkToObject()
 			-- Navigate to each waypoint
 			for i, wap in pairs(waypoints) do
 				-- Catcher
-				if not IsWalking or not object or not ClosestPlr.Character or ClosestPlr.Character.Humanoid.Health <= 0 or Humanoid.Health <= 0 then
+				if not IsWalking or not object or not ClosestPlr.Character or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
 					rconsoleprint("[Aimmy] - Breaking waypoint loop..\n");
 					IsWalking = false;
 					break;
@@ -95,7 +95,7 @@ local function getClosestPlr()
 		if player.TeamColor ~= Plr.TeamColor then
 			local character = player.Character
 			local nroot = character:FindFirstChild("HumanoidRootPart")
-			if character and nroot then
+			if character and nroot and character:FindFirstChild("Spawned") then
 				local distance = player:DistanceFromCharacter(nroot.Position)
 				if (nearestDistance and distance >= nearestDistance) then continue end
 				nearestDistance = distance
@@ -114,7 +114,7 @@ local function WalkToPlr()
 	ClosestPlr = getClosestPlr();
 
 	-- Walk to Plr
-	if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character:FindFirstChild("HumanoidRootPart") then
+	if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character:FindFirstChild("HumanoidRootPart") and ClosestPlr.Character:FindFirstChild("Spawned") then
 		IsWalking = true;
 		WalkToObject(ClosestPlr.Character:FindFirstChild("HumanoidRootPart"));
 		rconsoleprint("[Aimmy] - Starting walk to " .. tostring(ClosestPlr.Name) ..  "\n");
@@ -124,7 +124,7 @@ end
 -- Loop Pathfind
 task.spawn(function()
 	while task.wait() do
-		if (not IsWalking or ClosestPlr ~= getClosestPlr()) and Humanoid.Health > 0 and Humanoid.WalkSpeed > 0 then
+		if (not IsWalking or ClosestPlr ~= getClosestPlr()) and Char:FindFirstChild("Spawned") and Humanoid.WalkSpeed > 0 then
 			WalkToPlr();
 		end
 	end
@@ -133,7 +133,7 @@ end)
 -- Loop Aimlock
 task.spawn(function()
 	while task.wait() do
-		if ClosestPlr ~= nil and Camera and Humanoid.Health > 0 then
+		if ClosestPlr ~= nil and Camera and Char:FindFirstChild("Spawned") then
 			Aimlock();
 		end
 	end
@@ -142,7 +142,7 @@ end)
 -- Detect Stuck Bot
 local stuckamt = 0;
 Humanoid.Running:Connect(function(speed)
-	if speed < 3 and Humanoid.Health > 0 and Humanoid.WalkSpeed > 0 then
+	if speed < 3 and Char:FindFirstChild("Spawned") and Humanoid.WalkSpeed > 0 then
 		stuckamt = stuckamt + 1;
 		if stuckamt >= 5 then
 			rconsoleprint("[Aimmy] - Got stuck, recalculating path..\n");

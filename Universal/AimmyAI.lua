@@ -12,6 +12,9 @@ local Head = Char:WaitForChild("Head", 1337)
 local Root = Char:WaitForChild("HumanoidRootPart", 1337)
 local Humanoid = Char:WaitForChild("Humanoid", 1337)
 
+-- error bypass
+for i,v in pairs(getconnections(game:GetService("ScriptContext").Error)) do v:Disable() end
+
 -- Simple ESP
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/SimpleESP.lua", true))()
 
@@ -71,8 +74,10 @@ local function Aimlock()
 	
 	-- If visible aim and shoot
 	if aimpart then
+		IsAiming = true;
 		-- Aim at player
 		for i = 0, 1, 0.1 do
+			if not aimpart then break; end
 			Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
 			task.wait(0.01)
 		end
@@ -82,6 +87,8 @@ local function Aimlock()
 		task.wait(0.05)
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
 	end
+	
+	IsAiming = false;
 end
 
 -- Pathfinding function
@@ -92,31 +99,40 @@ local function WalkToObject()
 		if CRoot then
 			-- Calculate path and waypoints
 			local currpath = PathfindingService:CreatePath();
-			currpath:ComputeAsync(Root.Position, CRoot.Position)
-			local waypoints = currpath:GetWaypoints();
-			
-			-- Navigate to each waypoint
-			for i, wap in pairs(waypoints) do
-				-- Catcher
-				if ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
-					ClosestPlr = nil;
-					return;
-				end
-
-				-- Detect if needing to jump
-				if wap.Action == Enum.PathWaypointAction.Jump then
-					Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-				end
-
-				-- Aim at waypoint (look where we're walking)
-				--for i = 0, 1, 0.1 do
-					--Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.p, (wap.Position + Vector3.new(0,4,0))), i)
-					--task.wait(0.01)
-				--end
+			local success, errorMessage = pcall(function()
+				currpath:ComputeAsync(Root.Position, CRoot.Position)
+			end)
+			if success and currpath.Status == Enum.PathStatus.Success then
+				local waypoints = currpath:GetWaypoints();
 				
-				-- Move to Waypoint
-				Humanoid:MoveTo(wap.Position);
-				Humanoid.MoveToFinished:Wait(); -- Wait for us to get to Waypoint
+				-- Navigate to each waypoint
+				for i, wap in pairs(waypoints) do
+					-- Catcher
+					if ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
+						ClosestPlr = nil;
+						return;
+					end
+
+					-- Detect if needing to jump
+					if wap.Action == Enum.PathWaypointAction.Jump then
+						Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+					end
+
+					-- Aim at waypoint (look where we're walking)
+					task.spawn(function()
+						for i = 0, 1, 0.1 do
+							if IsAiming then break; end
+							if Char:FindFirstChild("Head") then
+								Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.p, Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z)), i)
+							end
+							task.wait(0.01)
+						end
+					end)
+					
+					-- Move to Waypoint
+					Humanoid:MoveTo(wap.Position);
+					Humanoid.MoveToFinished:Wait(); -- Wait for us to get to Waypoint
+				end
 			end
 		end
 	end

@@ -1,4 +1,4 @@
-function Simple_Create(base, team, name, trackername, color, studs)
+function Simple_Create(base, name, trackername, color, studs)
     local bb = Instance.new('BillboardGui', game.CoreGui)
     bb.Adornee = base
     bb.ExtentsOffset = Vector3.new(0,1,0)
@@ -49,5 +49,5 @@ getgenv().SESP_Create = Simple_Create;
 getgenv().SESP_Clear = Simple_ClearESP;
 
 -- Example:
--- Create(v.Character.Head, false, v.Name, "playertracker", TeamColor, math.floor(studs + 0.5))
+-- Create(v.Character.Head, v.Name, "playertracker", TeamColor, math.floor(studs + 0.5))
 -- ClearESP("playertracker");

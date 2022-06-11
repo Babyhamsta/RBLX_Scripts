@@ -1,4 +1,4 @@
-function Create(base, team, name, trackername, color, studs)
+function Simple_Create(base, team, name, trackername, color, studs)
     local bb = Instance.new('BillboardGui', game.CoreGui)
     bb.Adornee = base
     bb.ExtentsOffset = Vector3.new(0,1,0)
@@ -37,13 +37,16 @@ function Create(base, team, name, trackername, color, studs)
 end
 
 -- Clear ESP
-function ClearESP(espname)
+function Simple_ClearESP(espname)
     for _,v in pairs(game.CoreGui:GetChildren()) do
         if v.Name == espname and v:isA('BillboardGui') then
             v:Destroy()
         end
     end
 end
+
+getgenv().SESP_Create = Simple_Create;
+getgenv().SESP_Clear = Simple_ClearESP;
 
 -- Example:
 -- Create(v.Character.Head, false, v.Name, "playertracker", TeamColor, math.floor(studs + 0.5))

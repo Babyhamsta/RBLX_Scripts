@@ -12,26 +12,29 @@ local Head = Char:WaitForChild("Head", 1337)
 local Root = Char:WaitForChild("HumanoidRootPart", 1337)
 local Humanoid = Char:WaitForChild("Humanoid", 1337)
 
+-- Simple ESP
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/SimpleESP.lua", true))()
+
 -- Aimbot Vars
 local Camera = workspace.CurrentCamera;
-Camera.CameraType = Enum.CameraType.Scriptable
---local Predict = 2;
 
 -- Mouse
 local Mouse = Plr:GetMouse()
 
 -- Temp Vars
 local ClosestPlr;
+local IsAiming;
+local InitialPosition;
 
 -- Get Closest plr
 local function getClosestPlr()
 	local nearestPlayer, nearestDistance
 	for _, player in pairs(Players:GetPlayers()) do
-		if player.TeamColor ~= Plr.TeamColor then
+		if player.TeamColor ~= Plr.TeamColor and player ~= Plr then
 			local character = player.Character
 			local nroot = character:FindFirstChild("HumanoidRootPart")
 			if character and nroot and character:FindFirstChild("Spawned") then
-				local distance = player:DistanceFromCharacter(nroot.Position)
+				local distance = Plr:DistanceFromCharacter(nroot.Position)
 				if (nearestDistance and distance >= nearestDistance) then continue end
 				nearestDistance = distance
 				nearestPlayer = player
@@ -41,7 +44,7 @@ local function getClosestPlr()
 	return nearestPlayer
 end
 
--- Wallcheck (inspired by kinx)
+-- Wallcheck
 local function IsBehindWall(target, ignorelist)
 	local CurrCam = Camera.CFrame.p
 	local CurrRay = Ray.new(CurrCam, target - CurrCam)
@@ -51,38 +54,53 @@ end
 
 -- Aimlock/Triggerbot (temp)
 local function Aimlock()
-	if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character.Head then
-		if IsBehindWall(ClosestPlr.Character["Head"].Position,{Char,ClosestPlr.Character}) then			
-			-- Aim at player (snap aimbot)
-			Camera.CFrame = CFrame.new(Camera.CFrame.p, ClosestPlr.Character["Head"].Position) --+ ClosestPlr.Character["Head"].Velocity/Predict)
-
-			-- Mouse down and back up
-			VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
-			task.wait(0.05)
-			VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
+	-- Temp Holder
+	local aimpart = nil;
+	
+	-- Detect first visible part
+	if ClosestPlr and ClosestPlr.Character then
+		for i,v in ipairs(ClosestPlr.Character:GetChildren()) do
+			if v and v:IsA("Part") then -- is part
+				if IsBehindWall(v.Position,{Camera,Char,ClosestPlr.Character}) then -- is visible
+					aimpart = v;
+					break;
+				end
+			end
 		end
+	end
+	
+	-- If visible aim and shoot
+	if aimpart then
+		-- Aim at player
+		for i = 0, 1, 0.1 do
+			Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
+			task.wait(0.01)
+		end
+		
+		-- Mouse down and back up
+		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
+		task.wait(0.05)
+		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
 	end
 end
 
 -- Pathfinding function
 local function WalkToObject()
-	if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character:FindFirstChild("HumanoidRootPart") then
-		-- What we're looking for
-		local object = ClosestPlr.Character:FindFirstChild("HumanoidRootPart");
-
-		if object then
+	if ClosestPlr and ClosestPlr.Character then
+		-- RootPart
+		local CRoot = ClosestPlr.Character:FindFirstChild("HumanoidRootPart")
+		if CRoot then
 			-- Calculate path and waypoints
-			local path = PathfindingService:CreatePath();
-			path:ComputeAsync(Root.Position, object.Position)
-			local waypoints = path:GetWaypoints();
-
+			local currpath = PathfindingService:CreatePath();
+			currpath:ComputeAsync(Root.Position, CRoot.Position)
+			local waypoints = currpath:GetWaypoints();
+			
 			-- Navigate to each waypoint
 			for i, wap in pairs(waypoints) do
 				-- Catcher
-				if not object or ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
-					--rconsoleprint("[Aimmy] - Breaking waypoint loop..\n");
+				if ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
 					ClosestPlr = nil;
-					break;
+					return;
 				end
 
 				-- Detect if needing to jump
@@ -91,13 +109,15 @@ local function WalkToObject()
 				end
 
 				-- Aim at waypoint (look where we're walking)
-				Camera.CFrame = CFrame.new(Camera.CFrame.p, (wap.Position + Vector3.new(0,4,0)))
-
+				--for i = 0, 1, 0.1 do
+					--Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.p, (wap.Position + Vector3.new(0,4,0))), i)
+					--task.wait(0.01)
+				--end
+				
 				-- Move to Waypoint
 				Humanoid:MoveTo(wap.Position);
 				Humanoid.MoveToFinished:Wait(); -- Wait for us to get to Waypoint
 			end
-			--rconsoleprint("[Aimmy] - Finished waypoints (is done walking)\n");
 		end
 	end
 end
@@ -106,18 +126,25 @@ end
 local function WalkToPlr()
 	-- Get Closest Plr
 	ClosestPlr = getClosestPlr();
-
+	
 	-- Walk to Plr
-	if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character:FindFirstChild("HumanoidRootPart") and ClosestPlr.Character:FindFirstChild("Spawned") then
-		WalkToObject(ClosestPlr.Character:FindFirstChild("HumanoidRootPart"));
-		--rconsoleprint("[Aimmy] - Starting walk to " .. tostring(ClosestPlr.Name) ..  "\n");
+	if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character:FindFirstChild("HumanoidRootPart") then
+		if Humanoid.WalkSpeed > 0 and Char:FindFirstChild("Spawned") and ClosestPlr.Character:FindFirstChild("Spawned") then
+			--Create ESP
+			local studs = Plr:DistanceFromCharacter(ClosestPlr.Character.PrimaryPart.Position)
+			SESP_Create(ClosestPlr.Character.Head, ClosestPlr.Name, "TempTrack", Color3.new(1, 0, 0), math.floor(studs + 0.5));
+			
+			-- AI Walk to Plr
+			WalkToObject(ClosestPlr.Character.HumanoidRootPart);
+		end
 	end
 end
 
 -- Loop Pathfind
 task.spawn(function()
 	while task.wait() do
-		if (ClosestPlr == nil or ClosestPlr ~= getClosestPlr()) and Char:FindFirstChild("Spawned") and Humanoid.WalkSpeed > 0 then
+		if (ClosestPlr == nil or ClosestPlr ~= getClosestPlr()) then
+			SESP_Clear("TempTrack");
 			WalkToPlr();
 		end
 	end
@@ -126,8 +153,10 @@ end)
 -- Loop Aimlock
 task.spawn(function()
 	while task.wait() do
-		if ClosestPlr ~= nil and Camera and Char:FindFirstChild("Spawned") then
-			Aimlock();
+		if ClosestPlr ~= nil and Camera then
+			if Char:FindFirstChild("Spawned") and Humanoid.WalkSpeed > 0 then
+				Aimlock();
+			end
 		end
 	end
 end)
@@ -138,21 +167,9 @@ Humanoid.Running:Connect(function(speed)
 	if speed < 3 and Char:FindFirstChild("Spawned") and Humanoid.WalkSpeed > 0 then
 		stuckamt = stuckamt + 1;
 		if stuckamt >= 5 then
-			--rconsoleprint("[Aimmy] - Got stuck, recalculating path..\n");
 			stuckamt = 0;
 			ClosestPlr = nil;
-			WalkToPlr();
-			task.wait(1.5)
+			task.wait(5)
 		end
 	end
-end)
-
--- Reset on Death
-Plr.CharacterAdded:Connect(function(charmod)
-	charmod:WaitForChild("Humanoid").Died:Connect(function()
-		Plr.CharacterAdded:Wait()
-		--rconsoleprint("[Aimmy] - Died, recalculating path..\n");
-		ClosestPlr = nil;
-		WalkToPlr();
-	end)
 end)

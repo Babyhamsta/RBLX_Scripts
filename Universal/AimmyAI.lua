@@ -90,7 +90,7 @@ local function Aimlock()
 		
 		-- Mouse down and back up
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
-		task.wait(0.1)
+		task.wait(0.4)
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
 	end
 	

@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService('TweenService');
 local VIM = game:GetService("VirtualInputManager")
+local UserInputService = game:GetService("UserInputService")
 
 -- Local Plr
 local Plr = Players.LocalPlayer
@@ -25,6 +26,7 @@ local Camera = workspace.CurrentCamera;
 local Mouse = Plr:GetMouse()
 
 -- Temp Vars
+local RayIgnore = workspace:WaitForChild("Ray_Ignore", 1337)
 local ClosestPlr;
 local IsAiming;
 local InitialPosition;
@@ -35,12 +37,14 @@ local function getClosestPlr()
 	for _, player in pairs(Players:GetPlayers()) do
 		if player.TeamColor ~= Plr.TeamColor and player ~= Plr then
 			local character = player.Character
-			local nroot = character:FindFirstChild("HumanoidRootPart")
-			if character and nroot and character:FindFirstChild("Spawned") then
-				local distance = Plr:DistanceFromCharacter(nroot.Position)
-				if (nearestDistance and distance >= nearestDistance) then continue end
-				nearestDistance = distance
-				nearestPlayer = player
+			if character then
+				local nroot = character:FindFirstChild("HumanoidRootPart")
+				if character and nroot and character:FindFirstChild("Spawned") then
+					local distance = Plr:DistanceFromCharacter(nroot.Position)
+					if (nearestDistance and distance >= nearestDistance) then continue end
+					nearestDistance = distance
+					nearestPlayer = player
+				end
 			end
 		end
 	end
@@ -64,7 +68,7 @@ local function Aimlock()
 	if ClosestPlr and ClosestPlr.Character then
 		for i,v in ipairs(ClosestPlr.Character:GetChildren()) do
 			if v and v:IsA("Part") then -- is part
-				if IsBehindWall(v.Position,{Camera,Char,ClosestPlr.Character}) then -- is visible
+				if IsBehindWall(v.Position,{Camera,Char,ClosestPlr.Character,RayIgnore}) then -- is visible
 					aimpart = v;
 					break;
 				end
@@ -84,7 +88,7 @@ local function Aimlock()
 		
 		-- Mouse down and back up
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
-		task.wait(0.05)
+		task.wait(0.01)
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
 	end
 	
@@ -98,7 +102,7 @@ local function WalkToObject()
 		local CRoot = ClosestPlr.Character:FindFirstChild("HumanoidRootPart")
 		if CRoot then
 			-- Calculate path and waypoints
-			local currpath = PathfindingService:CreatePath();
+			local currpath = PathfindingService:CreatePath({WaypointSpacing = 5});
 			local success, errorMessage = pcall(function()
 				currpath:ComputeAsync(Root.Position, CRoot.Position)
 			end)
@@ -182,9 +186,10 @@ local stuckamt = 0;
 Humanoid.Running:Connect(function(speed)
 	if speed < 3 and Char:FindFirstChild("Spawned") and Humanoid.WalkSpeed > 0 then
 		stuckamt = stuckamt + 1;
-		if stuckamt >= 5 then
+		if stuckamt >= 8 then
 			stuckamt = 0;
-			ClosestPlr = nil;
+			SESP_Clear("TempTrack");
+			WalkToPlr();
 			task.wait(5)
 		end
 	end

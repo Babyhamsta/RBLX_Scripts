@@ -80,10 +80,11 @@ local function Aimlock()
 	if aimpart then
 		IsAiming = true;
 		-- Aim at player
-		for i = 0, 1, 0.1 do
+		local tcamcframe = Camera.CFrame;
+		for i = 0, 1, 1/25 do
 			if not aimpart then break; end
-			Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
-			task.wait(0.01)
+			Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
+			task.wait(0)
 		end
 		
 		-- Mouse down and back up
@@ -124,12 +125,13 @@ local function WalkToObject()
 
 					-- Aim at waypoint (look where we're walking)
 					task.spawn(function()
-						for i = 0, 1, 0.1 do
+						local tcamcframe = Camera.CFrame;
+						for i = 0, 1, 1/45 do
 							if IsAiming then break; end
 							if Char:FindFirstChild("Head") then
-								Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.p, Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z)), i)
+								Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z)), i)
 							end
-							task.wait(0.01)
+							task.wait(0)
 						end
 					end)
 					
@@ -153,6 +155,11 @@ local function WalkToPlr()
 			--Create ESP
 			local studs = Plr:DistanceFromCharacter(ClosestPlr.Character.PrimaryPart.Position)
 			SESP_Create(ClosestPlr.Character.Head, ClosestPlr.Name, "TempTrack", Color3.new(1, 0, 0), math.floor(studs + 0.5));
+			
+			-- Auto Reload (if next plr is far enough and out of site)
+			if math.floor(studs + 0.5) > 100 and not IsBehindWall(ClosestPlr.Character.HumanoidRootPart) then
+				VIM:SendKeyEvent(true, Enum.KeyCode.R, false, game)
+			end
 			
 			-- AI Walk to Plr
 			WalkToObject(ClosestPlr.Character.HumanoidRootPart);

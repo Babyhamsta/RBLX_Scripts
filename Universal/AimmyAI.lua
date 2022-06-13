@@ -81,16 +81,16 @@ local function Aimlock()
 		IsAiming = true;
 		-- Aim at player
 		local tcamcframe = Camera.CFrame;
-		for i = 0, 1, 1/40 do
+		for i = 0, 1, 1/50 do
 			if not aimpart then break; end
-			if aimpart.Position.Y < 2 then break; end -- Stop bot from aiming at the ground
+			if aimpart.Position.Y < 3 then break; end -- Stop bot from aiming at the ground
 			Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
 			task.wait(0)
 		end
 		
 		-- Mouse down and back up
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
-		task.wait(0.4)
+		task.wait(0.1)
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
 	end
 	
@@ -120,7 +120,7 @@ local function WalkToObject()
 					if ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
 						ClosestPlr = nil;
 						return;
-					elseif (InitialPosition - CRoot.Position).Magnitude > 20  then -- moved too far from start
+					elseif (InitialPosition - CRoot.Position).Magnitude > 15  then -- moved too far from start
 						WalkToObject(); -- restart
 						return;
 					end
@@ -135,8 +135,12 @@ local function WalkToObject()
 						local tcamcframe = Camera.CFrame;
 						for i = 0, 1, 1/65 do
 							if IsAiming then break; end
-							if Char:FindFirstChild("Head") then
-								Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z)), i)
+							if ClosestPlr and ClosestPlr.Character then
+								local CChar = ClosestPlr.Character;
+								if Char:FindFirstChild("Head") and CChar and CChar:FindFirstChild("Head") then
+									local MiddleAim = (Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z) + Vector3.new(CChar.Head.Position.X,CChar.Head.Position.Y,CChar.Head.Position.Z))/2;
+									Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, MiddleAim), i);
+								end
 							end
 							task.wait(0)
 						end
@@ -164,7 +168,7 @@ local function WalkToPlr()
 			SESP_Create(ClosestPlr.Character.Head, ClosestPlr.Name, "TempTrack", Color3.new(1, 0, 0), math.floor(studs + 0.5));
 			
 			-- Auto Reload (if next plr is far enough and out of site)
-			if math.floor(studs + 0.5) > 100 and not IsBehindWall(ClosestPlr.Character.HumanoidRootPart.Position, {Camera,Char,ClosestPlr.Character,RayIgnore}) then
+			if math.floor(studs + 0.5) > 60 and not IsBehindWall(ClosestPlr.Character.HumanoidRootPart.Position, {Camera,Char,ClosestPlr.Character,RayIgnore}) then
 				VIM:SendKeyEvent(true, Enum.KeyCode.R, false, game)
 			end
 			
@@ -204,7 +208,6 @@ Humanoid.Running:Connect(function(speed)
 			stuckamt = 0;
 			SESP_Clear("TempTrack");
 			WalkToPlr();
-			task.wait(5)
 		end
 	end
 end)

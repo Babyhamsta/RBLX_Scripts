@@ -25,12 +25,16 @@ local Camera = workspace.CurrentCamera;
 -- Mouse
 local Mouse = Plr:GetMouse()
 
+-- Map Spawns
+local Spawns = workspace:WaitForChild("Map", 1337):WaitForChild("Spawns", 1337)
+
 -- Temp Vars
 local RayIgnore = workspace:WaitForChild("Ray_Ignore", 1337)
 local ClosestPlr;
 local IsAiming;
 local InitialPosition;
 local CurrentEquipped = "Gun";
+local WalkToObject;
 
 -- Get Closest plr
 local function getClosestPlr()
@@ -84,7 +88,7 @@ local function Aimlock()
 		local tcamcframe = Camera.CFrame;
 		for i = 0, 1, 1/50 do
 			if not aimpart then break; end
-			if aimpart.Position.Y < 1 then break; end -- Stop bot from aiming at the ground
+			if aimpart.Position.Y < 0 then break; end -- Stop bot from aiming at the ground
 			Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
 			task.wait(0)
 		end
@@ -98,8 +102,56 @@ local function Aimlock()
 	IsAiming = false;
 end
 
--- Pathfinding function
-local function WalkToObject()
+local function RandomWalk()
+	-- Pick random spawn to walk to
+	local spch = Spawns:GetChildren()
+	local randomspawn = spch[math.random(1, #spch)]
+	
+	if randomspawn then
+		-- Calculate path and waypoints
+		local currpath = PathfindingService:CreatePath({WaypointSpacing = 6});
+		local success, errorMessage = pcall(function()
+			currpath:ComputeAsync(Root.Position, randomspawn.Position)
+		end)
+		if success and currpath.Status == Enum.PathStatus.Success then
+			local waypoints = currpath:GetWaypoints();
+			
+			-- Navigate to each waypoint
+			for i, wap in pairs(waypoints) do
+				-- Catcher
+				if ClosestPlr and ClosestPlr.Character:FindFirstChild("Spawned") and Char:FindFirstChild("Spawned") then
+					WalkToObject();
+					return;
+				end
+
+				-- Detect if needing to jump
+				if wap.Action == Enum.PathWaypointAction.Jump then
+					Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+				end
+
+				-- Aim while walking
+				task.spawn(function()
+					local tcamcframe = Camera.CFrame;
+					for i = 0, 1, 1/80 do
+						if IsAiming then break; end
+						local mixedaim = (Camera.CFrame.p.Y + Char.Head.Position.Y)/2;
+						Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, Vector3.new(wap.Position.X,mixedaim,wap.Position.Z)), i);
+						task.wait(0)
+					end
+				end)
+				
+				-- Move to Waypoint
+				if Humanoid then
+					Humanoid:MoveTo(wap.Position);
+					Humanoid.MoveToFinished:Wait(); -- Wait for us to get to Waypoint
+				end
+			end
+		end
+	end
+end
+
+-- Pathfinding to Plr function
+WalkToObject = function()
 	if ClosestPlr and ClosestPlr.Character then
 		-- RootPart
 		local CRoot = ClosestPlr.Character:FindFirstChild("HumanoidRootPart")
@@ -131,21 +183,23 @@ local function WalkToObject()
 						Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 					end
 
-					-- Aim at waypoint (look where we're walking)
+					-- Aim while walking (either path or plr)
 					task.spawn(function()
 						local primary = ClosestPlr.Character.PrimaryPart.Position;
 						local studs = Plr:DistanceFromCharacter(primary)
 						
 						local tcamcframe = Camera.CFrame;
-						for i = 0, 1, 1/85 do
+						for i = 0, 1, 1/80 do
 							if IsAiming then break; end
 							if primary and studs then
 								-- If close aim at player
 								if math.floor(studs + 0.5) < 55 then
-									local CChar = ClosestPlr.Character;
-									if Char:FindFirstChild("Head") and CChar and CChar:FindFirstChild("Head") then
-										local MiddleAim = (Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z) + Vector3.new(CChar.Head.Position.X,CChar.Head.Position.Y,CChar.Head.Position.Z))/2;
-										Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, MiddleAim), i);
+									if ClosestPlr and ClosestPlr.Character then
+										local CChar = ClosestPlr.Character;
+										if Char:FindFirstChild("Head") and CChar and CChar:FindFirstChild("Head") then
+											local MiddleAim = (Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z) + Vector3.new(CChar.Head.Position.X,CChar.Head.Position.Y,CChar.Head.Position.Z))/2;
+											Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, MiddleAim), i);
+										end
 									end
 								else -- else aim at waypoint
 									local mixedaim = (Camera.CFrame.p.Y + Char.Head.Position.Y)/2;
@@ -178,9 +232,14 @@ local function WalkToObject()
 					end)
 					
 					-- Move to Waypoint
-					Humanoid:MoveTo(wap.Position);
-					Humanoid.MoveToFinished:Wait(); -- Wait for us to get to Waypoint
+					if Humanoid then
+						Humanoid:MoveTo(wap.Position);
+						Humanoid.MoveToFinished:Wait(); -- Wait for us to get to Waypoint
+					end
 				end
+			else
+				-- Can't find path, move to a random spawn.
+				RandomWalk();
 			end
 		end
 	end
@@ -206,6 +265,8 @@ local function WalkToPlr()
 			-- AI Walk to Plr
 			WalkToObject(ClosestPlr.Character.HumanoidRootPart);
 		end
+	else
+		RandomWalk();
 	end
 end
 
@@ -235,8 +296,13 @@ local stuckamt = 0;
 Humanoid.Running:Connect(function(speed)
 	if speed < 3 and Char:FindFirstChild("Spawned") and Humanoid.WalkSpeed > 0 then
 		stuckamt = stuckamt + 1;
-		if stuckamt >= 8 then
+		if stuckamt == 4 then
+			-- Double jump
+			Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+			Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+		elseif stuckamt >= 8 then
 			stuckamt = 0;
+			-- Clear and redo path
 			SESP_Clear("TempTrack");
 			WalkToPlr();
 		end

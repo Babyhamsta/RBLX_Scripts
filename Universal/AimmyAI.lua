@@ -30,6 +30,7 @@ local RayIgnore = workspace:WaitForChild("Ray_Ignore", 1337)
 local ClosestPlr;
 local IsAiming;
 local InitialPosition;
+local CurrentEquipped = "Gun";
 
 -- Get Closest plr
 local function getClosestPlr()
@@ -83,14 +84,14 @@ local function Aimlock()
 		local tcamcframe = Camera.CFrame;
 		for i = 0, 1, 1/50 do
 			if not aimpart then break; end
-			if aimpart.Position.Y < 3 then break; end -- Stop bot from aiming at the ground
+			if aimpart.Position.Y < 1 then break; end -- Stop bot from aiming at the ground
 			Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
 			task.wait(0)
 		end
 		
 		-- Mouse down and back up
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
-		task.wait(0.1)
+		task.wait(0.2)
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
 	end
 	
@@ -107,7 +108,7 @@ local function WalkToObject()
 			InitialPosition = CRoot.Position;
 			
 			-- Calculate path and waypoints
-			local currpath = PathfindingService:CreatePath({WaypointSpacing = 5});
+			local currpath = PathfindingService:CreatePath({WaypointSpacing = 6});
 			local success, errorMessage = pcall(function()
 				currpath:ComputeAsync(Root.Position, CRoot.Position)
 			end)
@@ -132,17 +133,47 @@ local function WalkToObject()
 
 					-- Aim at waypoint (look where we're walking)
 					task.spawn(function()
+						local primary = ClosestPlr.Character.PrimaryPart.Position;
+						local studs = Plr:DistanceFromCharacter(primary)
+						
 						local tcamcframe = Camera.CFrame;
-						for i = 0, 1, 1/65 do
+						for i = 0, 1, 1/85 do
 							if IsAiming then break; end
-							if ClosestPlr and ClosestPlr.Character then
-								local CChar = ClosestPlr.Character;
-								if Char:FindFirstChild("Head") and CChar and CChar:FindFirstChild("Head") then
-									local MiddleAim = (Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z) + Vector3.new(CChar.Head.Position.X,CChar.Head.Position.Y,CChar.Head.Position.Z))/2;
-									Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, MiddleAim), i);
+							if primary and studs then
+								-- If close aim at player
+								if math.floor(studs + 0.5) < 55 then
+									local CChar = ClosestPlr.Character;
+									if Char:FindFirstChild("Head") and CChar and CChar:FindFirstChild("Head") then
+										local MiddleAim = (Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z) + Vector3.new(CChar.Head.Position.X,CChar.Head.Position.Y,CChar.Head.Position.Z))/2;
+										Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, MiddleAim), i);
+									end
+								else -- else aim at waypoint
+									local mixedaim = (Camera.CFrame.p.Y + Char.Head.Position.Y)/2;
+									Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, Vector3.new(wap.Position.X,mixedaim,wap.Position.Z)), i);
 								end
 							end
 							task.wait(0)
+						end
+					end)
+					
+					-- Auto Knife out (for faster running and realism)
+					task.spawn(function()
+						local primary = ClosestPlr.Character.PrimaryPart.Position;
+						local studs = Plr:DistanceFromCharacter(primary)
+						
+						if primary and studs then
+							local arms = Camera:FindFirstChild("Arms"):FindFirstChild("Real");
+							if arms then
+								if math.floor(studs + 0.5) > 70 and not IsBehindWall(primary, {Camera,Char,ClosestPlr.Character,RayIgnore}) then
+									if arms.Value ~= "Knife" and CurrentEquipped == "Gun" then
+										VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game);
+										CurrentEquipped = "Knife";
+									end
+								elseif arms.Value == "Knife" and CurrentEquipped ~= "Gun" then
+									VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game);
+									CurrentEquipped = "Gun";
+								end
+							end
 						end
 					end)
 					

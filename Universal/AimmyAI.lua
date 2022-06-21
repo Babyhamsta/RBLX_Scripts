@@ -86,7 +86,7 @@ local function Aimlock()
 		IsAiming = true;
 		-- Aim at player
 		local tcamcframe = Camera.CFrame;
-		for i = 0, 1, 1/50 do
+		for i = 0, 1, 1/45 do
 			if not aimpart then break; end
 			if aimpart.Position.Y < 0 then break; end -- Stop bot from aiming at the ground
 			Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
@@ -95,7 +95,7 @@ local function Aimlock()
 		
 		-- Mouse down and back up
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
-		task.wait(0.2)
+		task.wait(0.25)
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
 	end
 	
@@ -216,8 +216,9 @@ WalkToObject = function()
 						local studs = Plr:DistanceFromCharacter(primary)
 						
 						if primary and studs then
-							local arms = Camera:FindFirstChild("Arms"):FindFirstChild("Real");
+							local arms = Camera:FindFirstChild("Arms");
 							if arms then
+								arms = arms:FindFirstChild("Real");
 								if math.floor(studs + 0.5) > 70 and not IsBehindWall(primary, {Camera,Char,ClosestPlr.Character,RayIgnore}) then
 									if arms.Value ~= "Knife" and CurrentEquipped == "Gun" then
 										VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game);

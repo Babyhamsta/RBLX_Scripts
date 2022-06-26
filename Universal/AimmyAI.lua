@@ -67,9 +67,6 @@ local function IsVisible(target, ignorelist)
 	if #obsParts == 0 then
 		return true;
 	else
-		for _, part in pairs(obsParts) do
-			print(part:GetFullName())
-		end	
 		return false;
 	end
 end
@@ -186,7 +183,7 @@ WalkToObject = function()
 					if not ClosestPlr or not ClosestPlr.Character or ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
 						ClosestPlr = nil;
 						return;
-					elseif (InitialPosition - CRoot.Position).Magnitude > 5  then -- moved too far from start
+					elseif (InitialPosition - CRoot.Position).Magnitude > 10  then -- moved too far from start
 						WalkToObject(); -- restart
 						return;
 					end

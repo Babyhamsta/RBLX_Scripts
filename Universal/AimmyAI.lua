@@ -109,54 +109,10 @@ local function Aimlock()
 	IsAiming = false;
 end
 
-local function RandomWalk()
-	-- Pick random spawn to walk to
-	local spch = Spawns:GetChildren()
-	if #spch > 0 then
-		local randomspawn = spch[math.random(1, #spch)]
-		if randomspawn then
-			-- Calculate path and waypoints
-			local currpath = PathfindingService:CreatePath({WaypointSpacing = 8});
-			local success, errorMessage = pcall(function()
-				currpath:ComputeAsync(Root.Position, randomspawn.Position)
-			end)
-			if success and currpath.Status == Enum.PathStatus.Success then
-				local waypoints = currpath:GetWaypoints();
-				
-				-- Navigate to each waypoint
-				for i, wap in pairs(waypoints) do
-					-- Catcher
-					if i == 1 then continue end -- skip first waypoint
-					if ClosestPlr and ClosestPlr.Character:FindFirstChild("Spawned") and Char:FindFirstChild("Spawned") then
-						WalkToObject();
-						return;
-					end
-
-					-- Detect if needing to jump
-					if wap.Action == Enum.PathWaypointAction.Jump then
-						Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-					end
-
-					-- Aim while walking
-					task.spawn(function()
-						local tcamcframe = Camera.CFrame;
-						for i = 0, 1, 1/80 do
-							if IsAiming then break; end
-							local mixedaim = (Camera.CFrame.p.Y + Char.Head.Position.Y)/2;
-							Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, Vector3.new(wap.Position.X,mixedaim,wap.Position.Z)), i);
-							task.wait(0)
-						end
-					end)
-					
-					-- Move to Waypoint
-					if Humanoid then
-						Humanoid:MoveTo(wap.Position);
-						Humanoid.MoveToFinished:Wait(); -- Wait for us to get to Waypoint
-					end
-				end
-			end
-		end
-	end
+local function OnPathBlocked()
+   -- try again
+   warn("[AimmyAI] - Path was blocked, trying again.")
+   WalkToObject();
 end
 
 -- Pathfinding to Plr function
@@ -169,7 +125,11 @@ WalkToObject = function()
 			InitialPosition = CRoot.Position;
 			
 			-- Calculate path and waypoints
-			local currpath = PathfindingService:CreatePath({WaypointSpacing = 8});
+			local currpath = PathfindingService:CreatePath({["WaypointSpacing"] = 4, ["AgentHeight"] = 5, ["AgentRadius"] = 3, ["AgentCanJump"] = true});
+			
+			-- Listen for block connect
+			currpath.Blocked:Connect(OnPathBlocked)
+			
 			local success, errorMessage = pcall(function()
 				currpath:ComputeAsync(Root.Position, CRoot.Position)
 			end)
@@ -183,7 +143,7 @@ WalkToObject = function()
 					if not ClosestPlr or not ClosestPlr.Character or ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
 						ClosestPlr = nil;
 						return;
-					elseif (InitialPosition - CRoot.Position).Magnitude > 10  then -- moved too far from start
+					elseif (InitialPosition - CRoot.Position).Magnitude > 15  then -- moved too far from start
 						WalkToObject(); -- restart
 						return;
 					end
@@ -229,7 +189,7 @@ WalkToObject = function()
 							local arms = Camera:FindFirstChild("Arms");
 							if arms then
 								arms = arms:FindFirstChild("Real");
-								if math.floor(studs + 0.5) > 75 and not IsVisible(primary, {Camera,Char,ClosestPlr.Character,RayIgnore,MapIgnore}) then
+								if math.floor(studs + 0.5) > 85 and not IsVisible(primary, {Camera,Char,ClosestPlr.Character,RayIgnore,MapIgnore}) then
 									if arms.Value ~= "Knife" and CurrentEquipped == "Gun" then
 										VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game);
 										CurrentEquipped = "Knife";
@@ -250,7 +210,7 @@ WalkToObject = function()
 				end
 			else
 				-- Can't find path, move to a random spawn.
-				RandomWalk();
+				warn("[AimmyAI] - Unable to calculate path!");
 			end
 		end
 	end
@@ -277,7 +237,7 @@ local function WalkToPlr()
 			WalkToObject(ClosestPlr.Character.HumanoidRootPart);
 		end
 	else
-		RandomWalk();
+		--RandomWalk();
 	end
 end
 
@@ -311,7 +271,7 @@ Humanoid.Running:Connect(function(speed)
 			-- Double jump
 			Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 			Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-		elseif stuckamt >= 8 then
+		elseif stuckamt >= 10 then
 			stuckamt = 0;
 			-- Clear and redo path
 			SESP_Clear("TempTrack");

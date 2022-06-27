@@ -1,3 +1,11 @@
+-- Bot Settings
+getgenv().AimSens = 1/45; -- Aimbot sens
+getgenv().LookSens = 1/80; -- Aim while walking sens
+getgenv().PreAimDis = 55; -- if within 55 Studs then preaim
+getgenv().KnifeOutDis = 85; -- if within 85 Studs then swap back to gun
+getgenv().ReloadDis = 50; -- if over 50 Studs away then reload
+getgenv().RecalDis = 15; -- if player moves over this many studs then recalculate path to them
+
 -- Services
 local PathfindingService = game:GetService("PathfindingService")
 local Players = game:GetService("Players")
@@ -93,7 +101,7 @@ local function Aimlock()
 		IsAiming = true;
 		-- Aim at player
 		local tcamcframe = Camera.CFrame;
-		for i = 0, 1, 1/45 do
+		for i = 0, 1, AimSens do
 			if not aimpart then break; end
 			if (Head.Position.Y + aimpart.Position.Y) < 0 then break; end -- Stop bot from aiming at the ground
 			Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
@@ -143,7 +151,7 @@ WalkToObject = function()
 					if not ClosestPlr or not ClosestPlr.Character or ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
 						ClosestPlr = nil;
 						return;
-					elseif (InitialPosition - CRoot.Position).Magnitude > 15  then -- moved too far from start
+					elseif (InitialPosition - CRoot.Position).Magnitude > RecalDis  then -- moved too far from start
 						WalkToObject(); -- restart
 						return;
 					end
@@ -159,11 +167,11 @@ WalkToObject = function()
 						local studs = Plr:DistanceFromCharacter(primary)
 						
 						local tcamcframe = Camera.CFrame;
-						for i = 0, 1, 1/80 do
+						for i = 0, 1, LookSens do
 							if IsAiming then break; end
 							if primary and studs then
 								-- If close aim at player
-								if math.floor(studs + 0.5) < 55 then
+								if math.floor(studs + 0.5) < PreAimDis then
 									if ClosestPlr and ClosestPlr.Character then
 										local CChar = ClosestPlr.Character;
 										if Char:FindFirstChild("Head") and CChar and CChar:FindFirstChild("Head") then
@@ -189,7 +197,7 @@ WalkToObject = function()
 							local arms = Camera:FindFirstChild("Arms");
 							if arms then
 								arms = arms:FindFirstChild("Real");
-								if math.floor(studs + 0.5) > 85 and not IsVisible(primary, {Camera,Char,ClosestPlr.Character,RayIgnore,MapIgnore}) then
+								if math.floor(studs + 0.5) > KnifeOutDis and not IsVisible(primary, {Camera,Char,ClosestPlr.Character,RayIgnore,MapIgnore}) then
 									if arms.Value ~= "Knife" and CurrentEquipped == "Gun" then
 										VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game);
 										CurrentEquipped = "Knife";
@@ -229,7 +237,7 @@ local function WalkToPlr()
 			SESP_Create(ClosestPlr.Character.Head, ClosestPlr.Name, "TempTrack", Color3.new(1, 0, 0), math.floor(studs + 0.5));
 			
 			-- Auto Reload (if next plr is far enough and out of site)
-			if math.floor(studs + 0.5) > 60 and not IsVisible(ClosestPlr.Character.HumanoidRootPart.Position, {Camera,Char,ClosestPlr.Character,RayIgnore,MapIgnore}) then
+			if math.floor(studs + 0.5) > ReloadDis and not IsVisible(ClosestPlr.Character.HumanoidRootPart.Position, {Camera,Char,ClosestPlr.Character,RayIgnore,MapIgnore}) then
 				VIM:SendKeyEvent(true, Enum.KeyCode.R, false, game)
 			end
 			

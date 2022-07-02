@@ -1,5 +1,3 @@
--- Stolen/Forked from https://github.com/Targetry/EZ-Pathfinding-V5 (Ty)
-
 --//Services
 local PathFindingService = game:GetService("PathfindingService")
 local TweenService = game:GetService("TweenService")
@@ -30,9 +28,9 @@ function onWaypointReached(Reached, self, Target, Index, Waypoints)
 	if Reached and Index < #Waypoints then
 		self:IncreaseIndex(1)
 		Index = Index + 1
-
+		
 		humanoid:MoveTo(Waypoints[Index].Position)
-
+		
 		if Waypoints[Index + 1] == nil then
 			if self["Finished"] and typeof(self["Finished"]) == "function" then
 				self["Finished"]()
@@ -48,7 +46,7 @@ function Path.CalculateTimeRaw(Target, End)
 			local Humanoid = Target:FindFirstChildOfClass("Humanoid")
 			local Root = Target:FindFirstChild("HumanoidRootPart");
 			local Magnitude = (Root.Position - End.Position).Magnitude
-
+			
 			local Calculation = Magnitude / Humanoid.WalkSpeed
 
 			return Calculation
@@ -69,7 +67,7 @@ function Path:CalculateTime()
 	local Data = self
 	local Target = Data["Target"]
 	local End = Data["Endpoint"]
-
+	
 	if Target:FindFirstChildOfClass("Humanoid") then
 		if typeof(End) == "Instance" then
 			local Humanoid = Target:FindFirstChildOfClass("Humanoid")
@@ -109,16 +107,16 @@ end
 function ArrayNext(Target, Array, Index)
 	--@ Find next value in array; used for array movement.
 	Index = Index + 1
-
+	
 	if Array[Index] then
 		local value = Array[Index]
-
+		
 		repeat
 			local NewPath = Path.new(Target, Array[Index])
 			NewPath:Play()
 			Index = Index + 1
 		until Array[Index] == nil
-
+		
 		--@ Return Success
 		return true
 	else
@@ -135,7 +133,7 @@ function Path.new(Target, Endpoint)
 	--@ Creates a new path.
 	local params = {AgentRadius = AgentRadius1, AgentHeight = AgentHeight1, AgentCanJump = AgentCanJump1}
 	local path = PathFindingService:CreatePath(params)
-
+	
 	local self = {
 		["Target"] = Target;
 		["Time"] = Path.CalculateTimeRaw(Target, Endpoint);
@@ -144,20 +142,20 @@ function Path.new(Target, Endpoint)
 		["Walkspeed"] = 16;
 		["JumpPower"] = 100;
 	};
-
+	
 	if Target then
 		self["Path"] = path
-
+		
 		if Target:FindFirstChildOfClass("Humanoid") then
 			--@ Target is a rig
 			self["Humanoid"] = Target:FindFirstChildOfClass("Humanoid")
-
+			
 			local RootPart = Target:WaitForChild("HumanoidRootPart")
-
+			
 			if typeof(Endpoint) == "Vector3" or typeof(Endpoint) == "Instance" then
 				path:ComputeAsync(RootPart.Position, Endpoint.Position)
 				path.Blocked:Connect(OnPathBlocked, Target, Endpoint, self["CurrentWaypointIndex"])
-
+				
 				self["Humanoid"].MoveToFinished:Connect(function(status)
 					onWaypointReached(status, self, Target, self["CurrentWaypointIndex"], path:GetWaypoints())
 				end)
@@ -167,12 +165,12 @@ function Path.new(Target, Endpoint)
 			if typeof(Endpoint) == "Vector3" or typeof(Endpoint) == "Instance" then
 				path:ComputeAsync(Target.Position, Endpoint.Position)
 			end
-
+			
 			self["TweenPause"] = false
 			self["TweenStop"] = false
 		end
 	end
-
+	
 	return setmetatable(self, Path)
 end
 
@@ -183,18 +181,18 @@ function Path:Play()
 	local Target = Data["Target"]
 	local Humanoid = Data["Humanoid"]
 	local CurrentWaypointIndex = Data["CurrentWaypointIndex"]
-
+	
 	local Waypoints = Path2:GetWaypoints()
-
+	
 	if Path2 then
 		if Humanoid then
 			if Path2.Status == Enum.PathStatus.Success then
 				if Waypoints[CurrentWaypointIndex] then
 					local pos = Waypoints[CurrentWaypointIndex].Position
-
+					
 					Humanoid:MoveTo(pos)
 					Humanoid.MoveToFinished:Wait()
-
+					
 					if Path["WaypointReached"] and typeof(Path["WaypointReached"]) == "function" then
 						Path["WaypointReached"]()
 					end
@@ -205,50 +203,14 @@ function Path:Play()
 			local Continue = true
 
 			for i,v in pairs(Waypoints) do
-
-				if not ClosestPlr or not ClosestPlr.Character or ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
-					ClosestPlr = nil;
-					return;
-				elseif (InitialPosition - CRoot.Position).Magnitude > RecalDis  then -- moved too far from start
-					WalkToObject(); -- restart
-					return;
-				end
-
-				-- Aim while walking (either path or plr)
-				task.spawn(function()
-					local primary = ClosestPlr.Character.PrimaryPart.Position;
-					local studs = Plr:DistanceFromCharacter(primary)
-
-					local tcamcframe = Camera.CFrame;
-					for i = 0, 1, LookSens do
-						if IsAiming then break; end
-						if primary and studs then
-							-- If close aim at player
-							if math.floor(studs + 0.5) < PreAimDis then
-								if ClosestPlr and ClosestPlr.Character then
-									local CChar = ClosestPlr.Character;
-									if Char:FindFirstChild("Head") and CChar and CChar:FindFirstChild("Head") then
-										local MiddleAim = (Vector3.new(wap.Position.X,Char.Head.Position.Y,wap.Position.Z) + Vector3.new(CChar.Head.Position.X,CChar.Head.Position.Y,CChar.Head.Position.Z))/2;
-										Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, MiddleAim), i);
-									end
-								end
-							else -- else aim at waypoint
-								local mixedaim = (Camera.CFrame.p.Y + Char.Head.Position.Y)/2;
-								Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, Vector3.new(wap.Position.X,mixedaim,wap.Position.Z)), i);
-							end
-						end
-						task.wait(0)
-					end
-				end)
-
 				local TweenPause = self["TweenPause"]
 				local TweenStop = self["TweenStop"]
-
+				
 				if Continue == true then
 					if TweenStop == true then
 						Continue = false
 					end
-
+					
 					if v then
 						local Tween = TweenService:Create(Target, tweenInfo, {Position = v.Position})
 						Tween:Play()
@@ -256,16 +218,16 @@ function Path:Play()
 
 						if TweenPause == true then
 							Tween:Pause()
-
+							
 							repeat
 								wait()
 							until self["TweenPause"] == false
-
+							
 							Tween:Play()
 						end
-
+						
 						Tween.Completed:Wait()
-
+						
 						if Path["WaypointReached"] and typeof(Path["WaypointReached"]) == "function" then
 							Path["WaypointReached"]()
 						end
@@ -273,7 +235,7 @@ function Path:Play()
 						if Path["Finished"] and typeof(Path["Finished"]) == "function" then
 							Path["Finished"]()
 						end
-
+						
 						return
 					end
 				end
@@ -287,7 +249,7 @@ function Path:Pause()
 	local Data = self
 	local Target = Data["Target"]
 	local Humanoid = Data["Humanoid"]
-
+	
 	if Humanoid then
 		local Root = Target:FindFirstChild("HumanoidRootPart")
 		Root.Anchored = true
@@ -314,11 +276,11 @@ function Path:Destroy()
 	--@ Destroys desired path.
 	local Data = self
 	local Target = Data["Target"]
-
+	
 	if Target:FindFirstChildOfClass("Humanoid") then
 		local Humanoid = Data["Humanoid"]
 		local Root = Target:FindFirstChild("HumanoidRootPart")
-
+		
 		Humanoid:MoveTo(Root.Position)
 	else
 		Data["TweenStop"] = true
@@ -333,11 +295,11 @@ function Path:ArrayMovement()
 	local Humanoid = Data["Humanoid"]
 
 	local ArrayIndex = 1
-
+	
 	if End[ArrayIndex] then
 		local NewPath = Path.new(Target, End[ArrayIndex])
 		NewPath:Play()
-
+			
 		local Finished = ArrayNext(Target, End, ArrayIndex)
 
 		if Finished == true then
@@ -352,7 +314,7 @@ function Path:Jump()
 	local Target = Data["Target"]
 	local Humanoid = Data["Humanoid"]
 	local JumpPower = Data["JumpPower"]
-
+	
 	if Target then
 		if Humanoid then
 			Humanoid:Jump()
@@ -371,22 +333,22 @@ function Path:SetSettings(Data, Type)
 	--@ Set path settings.
 	local Target = self["Target"]
 	local HasHumanoid = nil
-
+	
 	if Target:FindFirstChildOfClass("Humanoid") then
 		HasHumanoid = Target:FindFirstChildOfClass("Humanoid")
 	end
-
+	
 	if Type == "TweenInfo" then
 		tweenInfo = Data
 	elseif Type == "JumpPower" then
 		self["JumpPower"] = Data;
-
+		
 		if HasHumanoid then
 			HasHumanoid.JumpPower = Data;
 		end
 	elseif Type == "WalkSpeed" then
 		self["WalkSpeed"] = Data;
-
+		
 		if HasHumanoid then
 			HasHumanoid.WalkSpeed = Data;
 		end

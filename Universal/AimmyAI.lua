@@ -27,6 +27,9 @@ for i,v in pairs(getconnections(game:GetService("ScriptContext").Error)) do v:Di
 -- Simple ESP
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/SimpleESP.lua", true))()
 
+-- Current Path
+local currpath = PathfindingService:CreatePath({["WaypointSpacing"] = 5});
+
 -- Aimbot Vars
 local Camera = workspace.CurrentCamera;
 
@@ -34,10 +37,10 @@ local Camera = workspace.CurrentCamera;
 local Mouse = Plr:GetMouse();
 
 -- Map Spawns
+local Map = workspace:WaitForChild("Map", 1337)
 local Spawns = workspace:WaitForChild("Map", 1337):WaitForChild("Spawns", 1337)
 
 -- Ignore
-local Map = workspace:WaitForChild("Map", 1337)
 local RayIgnore = workspace:WaitForChild("Ray_Ignore", 1337)
 local MapIgnore = Map:WaitForChild("Ignore", 1337)
 
@@ -56,7 +59,7 @@ local function getClosestPlr()
 			local character = player.Character
 			if character then
 				local nroot = character:FindFirstChild("HumanoidRootPart")
-				if character and nroot and character:FindFirstChild("Spawned") then
+				if character and nroot and player:FindFirstChild("Status").Alive.Value then
 					local distance = Plr:DistanceFromCharacter(nroot.Position)
 					if (nearestDistance and distance >= nearestDistance) then continue end
 					nearestDistance = distance
@@ -71,7 +74,7 @@ end
 -- Wallcheck / Visible Check
 local function IsVisible(target, ignorelist)
 	local obsParts = Camera:GetPartsObscuringTarget({target}, ignorelist);
-	
+
 	if #obsParts == 0 then
 		return true;
 	else
@@ -83,7 +86,7 @@ end
 local function Aimlock()
 	-- Temp Holder
 	local aimpart = nil;
-	
+
 	-- Detect first visible part
 	if ClosestPlr and ClosestPlr.Character then
 		for i,v in ipairs(ClosestPlr.Character:GetChildren()) do
@@ -95,7 +98,7 @@ local function Aimlock()
 			end
 		end
 	end
-	
+
 	-- If visible aim and shoot
 	if aimpart then
 		IsAiming = true;
@@ -107,20 +110,20 @@ local function Aimlock()
 			Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
 			task.wait(0)
 		end
-		
+
 		-- Mouse down and back up
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, true, game, 1)
 		task.wait(0.25)
 		VIM:SendMouseButtonEvent(Mouse.X, Mouse.Y, 0, false, game, 1)
 	end
-	
+
 	IsAiming = false;
 end
 
 local function OnPathBlocked()
-   -- try again
-   warn("[AimmyAI] - Path was blocked, trying again.")
-   WalkToObject();
+	-- try again
+	warn("[AimmyAI] - Path was blocked, trying again.")
+	WalkToObject();
 end
 
 -- Pathfinding to Plr function
@@ -131,24 +134,23 @@ WalkToObject = function()
 		if CRoot then
 			-- Get start position
 			InitialPosition = CRoot.Position;
-			
-			-- Calculate path and waypoints
-			local currpath = PathfindingService:CreatePath({["WaypointSpacing"] = 4, ["AgentHeight"] = 5, ["AgentRadius"] = 3, ["AgentCanJump"] = true});
-			
+
 			-- Listen for block connect
-			currpath.Blocked:Connect(OnPathBlocked)
+			--currpath.Blocked:Connect(OnPathBlocked)
 			
+			-- Calculate path
 			local success, errorMessage = pcall(function()
 				currpath:ComputeAsync(Root.Position, CRoot.Position)
 			end)
+			
 			if success and currpath.Status == Enum.PathStatus.Success then
 				local waypoints = currpath:GetWaypoints();
-				
+
 				-- Navigate to each waypoint
 				for i, wap in pairs(waypoints) do
 					-- Catcher
 					if i == 1 then continue end -- skip first waypoint
-					if not ClosestPlr or not ClosestPlr.Character or ClosestPlr ~= getClosestPlr() or not ClosestPlr.Character:FindFirstChild("Spawned") or not Char:FindFirstChild("Spawned") then
+					if not ClosestPlr or not ClosestPlr.Character or ClosestPlr ~= getClosestPlr() or not ClosestPlr:FindFirstChild("Status").Alive.Value or not Plr:FindFirstChild("Status").Alive.Value then
 						ClosestPlr = nil;
 						return;
 					elseif (InitialPosition - CRoot.Position).Magnitude > RecalDis  then -- moved too far from start
@@ -157,7 +159,7 @@ WalkToObject = function()
 					end
 
 					-- Detect if needing to jump
-					if wap.Action == Enum.PathWaypointAction.Jump then
+					if wap.Action == Enum.PathWaypointAction.Jump and Humanoid and Humanoid.Jump == false then
 						Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 					end
 
@@ -165,7 +167,7 @@ WalkToObject = function()
 					task.spawn(function()
 						local primary = ClosestPlr.Character.PrimaryPart.Position;
 						local studs = Plr:DistanceFromCharacter(primary)
-						
+
 						local tcamcframe = Camera.CFrame;
 						for i = 0, 1, LookSens do
 							if IsAiming then break; end
@@ -187,12 +189,12 @@ WalkToObject = function()
 							task.wait(0)
 						end
 					end)
-					
+
 					-- Auto Knife out (for faster running and realism)
 					task.spawn(function()
 						local primary = ClosestPlr.Character.PrimaryPart.Position;
 						local studs = Plr:DistanceFromCharacter(primary)
-						
+
 						if primary and studs then
 							local arms = Camera:FindFirstChild("Arms");
 							if arms then
@@ -209,7 +211,7 @@ WalkToObject = function()
 							end
 						end
 					end)
-					
+
 					-- Move to Waypoint
 					if Humanoid then
 						Humanoid:MoveTo(wap.Position);
@@ -228,19 +230,19 @@ end
 local function WalkToPlr()
 	-- Get Closest Plr
 	ClosestPlr = getClosestPlr();
-	
+
 	-- Walk to Plr
 	if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character:FindFirstChild("HumanoidRootPart") then
 		if Humanoid.WalkSpeed > 0 and Char:FindFirstChild("Spawned") and ClosestPlr.Character:FindFirstChild("Spawned") then
 			--Create ESP
 			local studs = Plr:DistanceFromCharacter(ClosestPlr.Character.PrimaryPart.Position)
 			SESP_Create(ClosestPlr.Character.Head, ClosestPlr.Name, "TempTrack", Color3.new(1, 0, 0), math.floor(studs + 0.5));
-			
+
 			-- Auto Reload (if next plr is far enough and out of site)
 			if math.floor(studs + 0.5) > ReloadDis and not IsVisible(ClosestPlr.Character.HumanoidRootPart.Position, {Camera,Char,ClosestPlr.Character,RayIgnore,MapIgnore}) then
 				VIM:SendKeyEvent(true, Enum.KeyCode.R, false, game)
 			end
-			
+
 			-- AI Walk to Plr
 			WalkToObject(ClosestPlr.Character.HumanoidRootPart);
 		end
@@ -270,20 +272,26 @@ task.spawn(function()
 	end
 end)
 
+
 -- Detect Stuck Bot
 local stuckamt = 0;
-Humanoid.Running:Connect(function(speed)
-	if speed < 3 and Char:FindFirstChild("Spawned") and Humanoid.WalkSpeed > 0 then
-		stuckamt = stuckamt + 1;
-		if stuckamt == 4 then
-			-- Double jump
-			Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-			Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-		elseif stuckamt >= 10 then
-			stuckamt = 0;
-			-- Clear and redo path
-			SESP_Clear("TempTrack");
-			WalkToPlr();
+task.spawn(function()
+	while task.wait(0.5) do
+		if Humanoid then
+			if Humanoid.MoveDirection.Magnitude == 0 then
+				if stuckamt == 5 then
+					-- Double jump
+					Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+					Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+					warn("[AimmyAI] - Attempting to jump out of stuck position..");
+					stuckamt = 0;
+				elseif stuckamt >= 10 then
+					SESP_Clear("TempTrack");
+					WalkToPlr();
+					warn("[AimmyAI] - Max stuck count, recalculating..");
+					stuckamt = 0;
+				end
+			end
 		end
 	end
 end)

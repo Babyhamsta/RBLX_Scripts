@@ -1,6 +1,6 @@
 -- Bot Settings
-getgenv().AimSens = 1/45; -- Aimbot sens
-getgenv().LookSens = 1/80; -- Aim while walking sens
+getgenv().AimSens = 1/40; -- Aimbot sens
+getgenv().LookSens = 1/70; -- Aim while walking sens
 getgenv().PreAimDis = 55; -- if within 55 Studs then preaim
 getgenv().KnifeOutDis = 85; -- if within 85 Studs then swap back to gun
 getgenv().ReloadDis = 50; -- if over 50 Studs away then reload

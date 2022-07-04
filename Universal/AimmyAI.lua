@@ -1,25 +1,36 @@
 -- Bot Settings
-getgenv().AimSens = 1/40; -- Aimbot sens
-getgenv().LookSens = 1/70; -- Aim while walking sens
-getgenv().PreAimDis = 55; -- if within 55 Studs then preaim
+getgenv().AimSens = 1/35; -- Aimbot sens
+getgenv().LookSens = 1/60; -- Aim while walking sens
+getgenv().PreAimDis = 45; -- if within 55 Studs then preaim
 getgenv().KnifeOutDis = 85; -- if within 85 Studs then swap back to gun
-getgenv().ReloadDis = 50; -- if over 50 Studs away then reload
+getgenv().ReloadDis = 30; -- if over 50 Studs away then reload
 getgenv().RecalDis = 15; -- if player moves over this many studs then recalculate path to them
 
 -- Services
-local PathfindingService = game:GetService("PathfindingService")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
+local PathfindingService = game:GetService("PathfindingService");
+local Players = game:GetService("Players");
+local ReplicatedStorage = game:GetService("ReplicatedStorage");
+local RunService = game:GetService("RunService");
 local TweenService = game:GetService('TweenService');
-local VIM = game:GetService("VirtualInputManager")
-local UserInputService = game:GetService("UserInputService")
+local VIM = game:GetService("VirtualInputManager");
+local UserInputService = game:GetService("UserInputService");
 
 -- Local Plr
-local Plr = Players.LocalPlayer
-local Char = Plr.Character or Plr.CharacterAdded:Wait()
-local Head = Char:WaitForChild("Head", 1337)
-local Root = Char:WaitForChild("HumanoidRootPart", 1337)
-local Humanoid = Char:WaitForChild("Humanoid", 1337)
+local Plr = Players.LocalPlayer;
+local Char = Plr.Character or Plr.CharacterAdded:Wait();
+local Head = Char:WaitForChild("Head", 1337);
+local Root = Char:WaitForChild("HumanoidRootPart", 1337);
+local Humanoid = Char:WaitForChild("Humanoid", 1337);
+
+-- GUI Stuff
+local MainMenu = Plr.PlayerGui:WaitForChild("Menew", 1337);
+local PlayButton = MainMenu:WaitForChild("Main", 1337).Play;
+local MainHUD = Plr.PlayerGui:WaitForChild("GUI", 1337);
+local TeamSelection = MainHUD:WaitForChild("TeamSelection", 1337);
+local Events = ReplicatedStorage:WaitForChild("Events", 1337);
+
+-- Team/Spawn Stuff
+local buttonColors = {"Blu", "Rd", "Ylw", "Grn"};
 
 -- error bypass
 for i,v in pairs(getconnections(game:GetService("ScriptContext").Error)) do v:Disable() end
@@ -45,10 +56,10 @@ local RayIgnore = workspace:WaitForChild("Ray_Ignore", 1337)
 local MapIgnore = Map:WaitForChild("Ignore", 1337)
 
 -- Temp Vars
+local CurrentEquipped = "Gun";
 local ClosestPlr;
 local IsAiming;
 local InitialPosition;
-local CurrentEquipped = "Gun";
 local WalkToObject;
 
 -- Get Closest plr
@@ -59,11 +70,13 @@ local function getClosestPlr()
 			local character = player.Character
 			if character then
 				local nroot = character:FindFirstChild("HumanoidRootPart")
-				if character and nroot and player:FindFirstChild("Status").Alive.Value then
-					local distance = Plr:DistanceFromCharacter(nroot.Position)
-					if (nearestDistance and distance >= nearestDistance) then continue end
-					nearestDistance = distance
-					nearestPlayer = player
+				if nroot and player:FindFirstChild("Status").Alive.Value then
+					if character.Humanoid and (character.Humanoid:GetState() ~= Enum.HumanoidStateType.Climbing and character.Humanoid:GetState() ~= Enum.HumanoidStateType.Freefall) then
+						local distance = Plr:DistanceFromCharacter(nroot.Position)
+						if (nearestDistance and distance >= nearestDistance) then continue end
+						nearestDistance = distance
+						nearestPlayer = player
+					end
 				end
 			end
 		end
@@ -120,10 +133,33 @@ local function Aimlock()
 	IsAiming = false;
 end
 
-local function OnPathBlocked()
-	-- try again
-	warn("[AimmyAI] - Path was blocked, trying again.")
-	WalkToObject();
+-- Auto Spawn
+local function AutoSpawn()
+	if MainMenu.Enabled then
+		-- Fire play button
+		for i,v in pairs(getconnections(PlayButton.MouseButton1Down)) do
+		   v:Fire();
+		end
+		
+		-- Wait for GUI to change
+		repeat task.wait(1) until TeamSelection.Visible;
+		
+		-- Buttons check and auto team select
+		if TeamSelection:FindFirstChild("Buttons").Visible then -- normal
+			for i, teamButton in pairs(TeamSelection:FindFirstChild("Buttons"):GetChildren()) do
+				if table.find(buttonColors, teamButton.Name) and not teamButton.lock.Visible then
+					for i,v in pairs(getconnections(teamButton.MouseButton1Down)) do
+					   v:Fire();
+					end
+					break;
+				end
+			end
+		elseif TeamSelection:FindFirstChild("ButtonsFFA").Visible then -- FFA
+			for i,v in pairs(getconnections(TeamSelection:FindFirstChild("ButtonsFFA").FFA.MouseButton1Down)) do
+				v:Fire();
+			end
+		end
+	end
 end
 
 -- Pathfinding to Plr function
@@ -134,9 +170,6 @@ WalkToObject = function()
 		if CRoot then
 			-- Get start position
 			InitialPosition = CRoot.Position;
-
-			-- Listen for block connect
-			--currpath.Blocked:Connect(OnPathBlocked)
 			
 			-- Calculate path
 			local success, errorMessage = pcall(function()
@@ -221,6 +254,7 @@ WalkToObject = function()
 			else
 				-- Can't find path, move to a random spawn.
 				warn("[AimmyAI] - Unable to calculate path!");
+				WalkToObject(); -- restart
 			end
 		end
 	end
@@ -233,7 +267,7 @@ local function WalkToPlr()
 
 	-- Walk to Plr
 	if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character:FindFirstChild("HumanoidRootPart") then
-		if Humanoid.WalkSpeed > 0 and Char:FindFirstChild("Spawned") and ClosestPlr.Character:FindFirstChild("Spawned") then
+		if Humanoid.WalkSpeed > 0 and Plr:FindFirstChild("Status").Alive.Value and ClosestPlr:FindFirstChild("Status").Alive.Value then
 			--Create ESP
 			local studs = Plr:DistanceFromCharacter(ClosestPlr.Character.PrimaryPart.Position)
 			SESP_Create(ClosestPlr.Character.Head, ClosestPlr.Name, "TempTrack", Color3.new(1, 0, 0), math.floor(studs + 0.5));
@@ -246,10 +280,15 @@ local function WalkToPlr()
 			-- AI Walk to Plr
 			WalkToObject(ClosestPlr.Character.HumanoidRootPart);
 		end
-	else
-		--RandomWalk();
 	end
 end
+
+-- Loop Auto Spawn
+task.spawn(function()
+	while task.wait(0.5) do
+		AutoSpawn();
+	end
+end)
 
 -- Loop Pathfind
 task.spawn(function()
@@ -265,7 +304,7 @@ end)
 task.spawn(function()
 	while task.wait() do
 		if ClosestPlr ~= nil and Camera then
-			if Char:FindFirstChild("Spawned") and Humanoid.WalkSpeed > 0 then
+			if Plr:FindFirstChild("Status").Alive.Value and Humanoid.WalkSpeed > 0 then
 				Aimlock();
 			end
 		end

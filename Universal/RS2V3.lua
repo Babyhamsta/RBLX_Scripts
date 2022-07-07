@@ -1099,7 +1099,12 @@ GetReturn.MouseButton1Down:Connect(function()
 end)
 
 Decompile.MouseButton1Down:Connect(function()
-	dump_script('Decompile currently broken with LuaU.')
+	if decompile then
+		local source = decompile(g_caller)
+		dump_script(type(source) == "boolean" and "Failed to decompile caller script!" or source)
+	else
+		dump_script("Decompile is not supported by your exploit!")
+	end
 end)
 
 Step:Connect(function()

@@ -49,5 +49,6 @@ getgenv().SESP_Create = Simple_Create;
 getgenv().SESP_Clear = Simple_ClearESP;
 
 -- Example:
--- Create(v.Character.Head, v.Name, "playertracker", TeamColor, math.floor(studs + 0.5))
--- ClearESP("playertracker");
+-- Part/Instance, Display Name, Esp Name, Color of ESP, Studs (Can be calculated using Plr:DistanceFromCharacter())
+-- SESP_Create(v.Character.Head, v.Name, "playertracker", Color3, math.floor(studs + 0.5))
+-- SESP_Clear("playertracker");

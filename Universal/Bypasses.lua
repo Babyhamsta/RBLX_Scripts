@@ -1,7 +1,7 @@
 -- Pretty much just a bunch of know detection bypasses. (Big thanks to Lego Hacker, Modulus, Bluwu, and I guess Iris or something)
 
 -- GCInfo/CollectGarbage Bypass (Realistic by Lego - Amazing work!)
-spawn(function()
+task.spawn(function()
     repeat task.wait() until game:IsLoaded()
 
     local Amplitude = 200
@@ -68,7 +68,7 @@ spawn(function()
 end)
 
 -- Memory Bypass
-spawn(function()
+task.spawn(function()
     repeat task.wait() until game:IsLoaded()
 
     local RunService = cloneref(game:GetService("RunService"))
@@ -115,7 +115,7 @@ local coreguiTable = {}
 game:GetService("ContentProvider"):PreloadAsync({CoreGui}, function(assetId) --use preloadasync to patch preloadasync :troll:
     if not assetId:find("rbxassetid://") then
         table.insert(coreguiTable, assetId);
-end
+    end
 end)
 local gameTable = {}
 

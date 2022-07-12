@@ -135,31 +135,25 @@ end
 
 -- Auto Spawn
 local function AutoSpawn()
-	if MainMenu.Enabled then
-		-- Fire play button
-		for i,v in pairs(getconnections(PlayButton.MouseButton1Down)) do
-		   v:Fire();
-		end
-		
-		-- Wait for GUI to change
-		repeat task.wait(1) until TeamSelection.Visible;
-		
-		-- Buttons check and auto team select
-		if TeamSelection:FindFirstChild("Buttons").Visible then -- normal
-			for i, teamButton in pairs(TeamSelection:FindFirstChild("Buttons"):GetChildren()) do
-				if table.find(buttonColors, teamButton.Name) and not teamButton.lock.Visible then
-					for i,v in pairs(getconnections(teamButton.MouseButton1Down)) do
-					   v:Fire();
-					end
-					break;
-				end
-			end
-		elseif TeamSelection:FindFirstChild("ButtonsFFA").Visible then -- FFA
-			for i,v in pairs(getconnections(TeamSelection:FindFirstChild("ButtonsFFA").FFA.MouseButton1Down)) do
-				v:Fire();
-			end
-		end
-	end
+    if MainMenu.Enabled then
+        -- Fire play button
+        firesignal(PlayButton.MouseButton1Down);
+
+        -- Wait for GUI to change
+        repeat task.wait(0.5) until TeamSelection.Visible;
+
+        -- Buttons check and auto team select
+        if TeamSelection:FindFirstChild("Buttons").Visible then -- normal
+            for i, teamButton in pairs(TeamSelection:FindFirstChild("Buttons"):GetChildren()) do
+                if table.find(buttonColors, teamButton.Name) and not teamButton.lock.Visible then
+                    firesignal(teamButton.MouseButton1Down);
+                    break;
+                end
+        end
+        elseif TeamSelection:FindFirstChild("ButtonsFFA").Visible then -- FFA
+            firesignal(TeamSelection:FindFirstChild("ButtonsFFA").FFA.MouseButton1Down);
+        end
+    end
 end
 
 -- Pathfinding to Plr function

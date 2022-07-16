@@ -22,6 +22,9 @@ end
 Bypassed_Dex.Name = RandomCharacters(math.random(5, 20))
 if gethui then
     Bypassed_Dex.Parent = gethui();
+elseif syn and syn.protect_gui then
+    syn.protect_gui(Bypassed_Dex);
+    Bypassed_Dex.Parent = cloneref(game:GetService("CoreGui"))
 else
     Bypassed_Dex.Parent = cloneref(game:GetService("CoreGui"))
 end

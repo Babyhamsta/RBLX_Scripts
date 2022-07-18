@@ -115,6 +115,8 @@ task.spawn(function()
             if Player.Character and Player.Character:FindFirstChild("Humanoid") then
                 ScriptPaused = true;
                 Player.Character:FindFirstChild("Humanoid").Jump = true;
+                Player.Character:FindFirstChild("Humanoid").Jump = true;
+                Player.Character:FindFirstChild("Humanoid").Jump = true;
                 repeat AutoEat() until Hunger.Value > 90;
                 ScriptPaused = false;
             end

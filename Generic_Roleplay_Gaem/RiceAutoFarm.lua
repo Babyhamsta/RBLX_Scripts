@@ -114,8 +114,9 @@ task.spawn(function()
         if Hunger.Value < 10 then
             if Player.Character and Player.Character:FindFirstChild("Humanoid") then
                 ScriptPaused = true;
-                task.wait(0.5)
-                Player.Character:FindFirstChild("Humanoid").Jump = true;
+                if Karts:FindFirstChild(Player.Name) then
+                    Karts:FindFirstChild(Player.Name):FindFirstChild("VehicleSeat"):Destroy()
+                end
                 repeat AutoEat() until Hunger.Value > 90;
                 ScriptPaused = false;
             end

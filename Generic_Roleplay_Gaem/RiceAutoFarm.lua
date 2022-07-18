@@ -25,9 +25,12 @@ function RemoveTags()
     if Player.Character then
         local proot = Player.Character:FindFirstChild("HumanoidRootPart");
         if proot then
-            if proot:FindFirstChild("HeadGui") then
-                proot:FindFirstChild("HeadGui"):FindFirstChild("Title"):Destroy();
-                proot:FindFirstChild("HeadGui"):FindFirstChild("Team"):Destroy();
+        	local HeadGui = proot:FindFirstChild("HeadGui");
+            if HeadGui then
+            	if HeadGui:FindFirstChild("Title") and HeadGui:FindFirstChild("Team") then
+					HeadGui:FindFirstChild("Title"):Destroy();
+					HeadGui:FindFirstChild("Team"):Destroy();
+				end
             end
         end
         

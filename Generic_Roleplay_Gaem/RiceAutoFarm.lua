@@ -52,6 +52,7 @@ end
 
 --// Get/Eat Food \\--
 function AutoEat()
+    task.wait();
     local CurrSeat = nil;
     local FoodTb = {"Basic Food", "Good Food", "Best Food"}
     

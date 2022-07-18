@@ -25,12 +25,12 @@ function RemoveTags()
     if Player.Character then
         local proot = Player.Character:FindFirstChild("HumanoidRootPart");
         if proot then
-        	local HeadGui = proot:FindFirstChild("HeadGui");
+            local HeadGui = proot:FindFirstChild("HeadGui");
             if HeadGui then
             	if HeadGui:FindFirstChild("Title") and HeadGui:FindFirstChild("Team") then
-					HeadGui:FindFirstChild("Title"):Destroy();
-					HeadGui:FindFirstChild("Team"):Destroy();
-				end
+		    HeadGui:FindFirstChild("Title"):Destroy();
+		    HeadGui:FindFirstChild("Team"):Destroy();
+		end
             end
         end
         
@@ -59,20 +59,25 @@ function AutoEat()
     local CurrSeat = nil;
     local FoodTb = {"Basic Food", "Good Food", "Best Food"}
     
-    if BuyFood:FindFirstChild("3") then
-        BuyFood["3"]:Sit(Player.Character.Humanoid)
-        CurrSeat = 3;
-    elseif BuyFood:FindFirstChild("2") then
-        BuyFood["2"]:Sit(Player.Character.Humanoid)
-        CurrSeat = 2;
-    elseif BuyFood:FindFirstChild("1") then
-        BuyFood["1"]:Sit(Player.Character.Humanoid)
-        CurrSeat = 1;
-    end
+    if Player.Character:FindFirstChild("Humanoid") then
+        if BuyFood:FindFirstChild("3") then
+            BuyFood["3"]:Sit(Player.Character.Humanoid)
+            CurrSeat = 3;
+        elseif BuyFood:FindFirstChild("2") then
+            BuyFood["2"]:Sit(Player.Character.Humanoid)
+            CurrSeat = 2;
+        elseif BuyFood:FindFirstChild("1") then
+            BuyFood["1"]:Sit(Player.Character.Humanoid)
+            CurrSeat = 1;
+        end
     
-    local Tool = GetTool(tostring(FoodTb[CurrSeat]));
-    if Tool then
-        Tool:Activate()
+        local Tool = GetTool(tostring(FoodTb[CurrSeat]));
+        if Tool then
+           Tool:Activate()
+        end
+    else -- ded
+	RemoteEvent:FireServer("Respawn");
+        ScriptPaused = false;
     end
 end
 

@@ -42,7 +42,7 @@ oldTraceback = hookfunction(debug.traceback, function()
 	return stackTrace:match'[^\n\r]*\n?(.*)';
 end);
 
-getgenv().secure_call = newcclosure(function(Function, Script, ...)
+getgenv().cus_secure_call = newcclosure(function(Function, Script, ...)
 	--[[
 		localize the current environment to restore 
 		for later.

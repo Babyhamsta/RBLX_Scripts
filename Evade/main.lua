@@ -86,15 +86,17 @@ function ClearESP(espname)
     end
 end
 
--- Crash Server (Credits to FeIix (V3RM) for the idea <3)
+-- God Mode
 MainSection:AddToggle("God Mode", "Gives you god mode", false, function(bool)
     GodMode_Enabled = bool;
 end)
 
+-- Alpha Skin Giver
 MainSection:AddButton("Alpha Skin", "Gives you the private alpha skin", function()
     Events.UI.Purchase:InvokeServer("Skins", "AlphaTester")
 end)
 
+-- Make server all bright so your eye balls can see
 MainSection:AddButton("Full Bright", "For users who are scared of the dark :(", function()
     local light = Instance.new("PointLight", Character.HumanoidRootPart)
     light.Brightness = .3

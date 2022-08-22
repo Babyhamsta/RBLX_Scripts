@@ -93,7 +93,7 @@ MainSection:AddButton("God Mode", "Gives you god mode", function()
     Hum.Parent = Character;
 end
 
-MainSection:AddButton("Loop God Mode", "Keeps god mode on", false, function(bool)
+MainSection:AddToggle("Loop God Mode", "Keeps god mode on", false, function(bool)
     GodMode_Enabled = bool;
 end)
 

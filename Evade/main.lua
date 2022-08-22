@@ -6,6 +6,7 @@ local CoreGui = game:GetService("CoreGui");
 local Players = game:GetService("Players");
 local Workspace = game:GetService("Workspace");
 local Lighting = game:GetService("Lighting");
+local VirtualInputManager = game:GetService("VirtualInputManager");
 
 -- Remote Stuff
 local Events = ReplicatedStorage:WaitForChild("Events", 1337)
@@ -37,6 +38,7 @@ local ESPSection = ESPPage:AddSection("ESP")
 local Highlights_Active = false;
 local AI_ESP = false;
 local GodMode_Enabled = false;
+local Bhop_Enabled = false;
 
 -- Simple Text ESP
 function Simple_Create(base, name, trackername, studs)
@@ -91,10 +93,25 @@ MainSection:AddButton("God Mode", "Gives you god mode", function()
     local Hum = Character:WaitForChild("Humanoid")
     Hum.Parent = nil;
     Hum.Parent = Character;
-end
+end)
 
 MainSection:AddToggle("Loop God Mode", "Keeps god mode on", false, function(bool)
     GodMode_Enabled = bool;
+end)
+
+MainSection:AddToggle("Auto Bhop", "Simply enable and jump once to start auto hopping", false, function(bool)
+    Bhop_Enabled = bool;
+    
+    if bool then
+    	Character.Humanoid.StateChanged:Connect(function(oldState, newState)
+			if newState == Enum.HumanoidStateType.Landed then
+				task.wait(0.09)
+				VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
+				task.wait()
+				VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
+			end
+		end)
+	end
 end)
 
 -- Alpha Skin Giver
@@ -169,6 +186,17 @@ Player.CharacterAdded:Connect(function(Char)
         Hum.Parent = nil;
         Hum.Parent = Char;
     end
+    
+    if Bhop_Enabled then
+		Char.Humanoid.StateChanged:Connect(function(oldState, newState)
+			if newState == Enum.HumanoidStateType.Landed then
+				task.wait(0.09)
+				VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
+				task.wait()
+				VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
+			end
+		end)
+	end
 end)
 
 

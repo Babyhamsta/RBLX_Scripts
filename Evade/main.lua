@@ -110,7 +110,7 @@ MainSection:AddButton("Full Bright", "For users who are scared of the dark :(", 
 end)
 
 
--- Crash Server (Credits to FeIix (V3RM) for the idea <3)
+-- Crash Server (Credits to FeIix (V3RM) <3)
 ServerSection:AddButton("Crash Server", "Crashes the server", function()
     local Respawn = Events:FindFirstChild("Respawn")
     while task.wait() do
@@ -159,7 +159,7 @@ end)
 
 -- [[ LOOPS ]] --
 
--- God Mode
+-- God Mode (Credits to FeIix (V3RM) <3)
 task.spawn(function()
     while wait(3) do
         if GodMode_Enabled then

@@ -1,33 +1,21 @@
 --[[
-   Credit to Polarrr#0001 for original script
+   Credit to Polarrr#0001 for original script (it's been moddied quite a bit to support loadstrings)
    https://v3rmillion.net/member.php?action=profile&uid=2340618
 --]]
 
 local lib = {}
-
-local Outlines = true
-local OutlineColoring = Color3.fromRGB(255, 255, 255)
-local OutlineFill = false
-local FillOpacity = 1
-local FillColoring = Color3.fromRGB(255, 255, 255)
-
-local NameTags = true
-local TextFont = Enum.Font.RobotoMono
-local NameColor = Color3.fromRGB(255, 255, 255)
-local NamePositioning = false
-
 local Folder = Instance.new("Folder", game:GetService("CoreGui"))
-Folder.Name = ""
 
-function lib:AddOutline(Character)
+function lib:AddOutline(Character, OutlineFill)
+   local OutlineFill = OutlineFill or false;
    local Highlight = Instance.new("Highlight", Folder)
    
-   Highlight.OutlineColor = OutlineColoring
+   Highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
    Highlight.Adornee = Character
    
    if OutlineFill == true then
-       Highlight.FillColor = FillColoring
-       Highlight.FillTransparency = FillOpacity
+       Highlight.FillColor = Color3.fromRGB(255, 255, 255)
+       Highlight.FillTransparency = 1
    else
        Highlight.FillTransparency = 1
    end
@@ -50,9 +38,9 @@ function lib:AddNameTag(Character)
    TextLabel.BackgroundTransparency = 1
    
    TextLabel.Text = Character.Name
-   TextLabel.Font = TextFont
-   TextLabel.TextColor3 = NameColor
-   TextLabel.TextScaled = NamePositioning
+   TextLabel.Font = Enum.Font.RobotoMono
+   TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+   TextLabel.TextScaled = false
 end
 
 function lib:ClearESP()

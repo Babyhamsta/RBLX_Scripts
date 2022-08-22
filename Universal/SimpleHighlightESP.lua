@@ -17,7 +17,7 @@ local NameColor = Color3.fromRGB(255, 255, 255)
 local NamePositioning = false
 
 local Folder = Instance.new("Folder", game:GetService("CoreGui"))
-Folder.Name = "highlights_oof"
+Folder.Name = ""
 
 function lib:AddOutline(Character)
    local Highlight = Instance.new("Highlight", Folder)

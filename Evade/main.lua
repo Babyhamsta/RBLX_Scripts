@@ -31,14 +31,16 @@ local ESPPage = Window:NewTab("ESP")
 
 -- Create Sections
 local MainSection = MainPage:AddSection("Main")
+local BhopSection = MainPage:AddSection("Bhop")
 local ServerSection = ServerPage:AddSection("Server")
 local ESPSection = ESPPage:AddSection("ESP")
 
--- GUI Toggles
+-- GUI Toggles / Settings
 local Highlights_Active = false;
 local AI_ESP = false;
 local GodMode_Enabled = false;
 local Bhop_Enabled = false;
+local Bhop_Cooldown = 0.9;
 
 -- Simple Text ESP
 function Simple_Create(base, name, trackername, studs)
@@ -100,19 +102,23 @@ MainSection:AddToggle("Loop God Mode", "Keeps god mode on", false, function(bool
 end)
 
 -- Auto Bhop (Credits to Egg Salad)
-MainSection:AddToggle("Auto Bhop", "Simply enable and jump once to start auto hopping", false, function(bool)
+BhopSection:AddToggle("Auto Bhop", "Simply enable and jump once to start auto hopping", false, function(bool)
     Bhop_Enabled = bool;
 
     if bool then
         Character.Humanoid.StateChanged:Connect(function(oldState, newState)
             if newState == Enum.HumanoidStateType.Landed then
-                task.wait(0.09)
+                task.wait(Bhop_Cooldown)
                 VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
                 task.wait()
                 VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
             end
         end)
     end
+end)
+
+BhopSection:AddSlider("Bhop cooldown", "Adjust to higher number if bhop stops jumping randomly (default 0.9 secs).", 0, 1.3, 0.9, true, function(val)
+    Bhop_Cooldown = tonumber(val);
 end)
 
 -- Alpha Skin Giver
@@ -191,7 +197,7 @@ Player.CharacterAdded:Connect(function(Char)
     if Bhop_Enabled then
         Char.Humanoid.StateChanged:Connect(function(oldState, newState)
             if newState == Enum.HumanoidStateType.Landed then
-                task.wait(0.09)
+                task.wait(Bhop_Cooldown)
                 VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
                 task.wait()
                 VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)

@@ -154,18 +154,18 @@ end)
 
 -- Highlight helper
 game:GetService("Players").PlayerAdded:Connect(function(Player)
-    Player.CharacterAdded:Connect(function(Character)
+    Player.CharacterAdded:Connect(function(Char)
         if Highlights_Active then
-            ESP:AddOutline(Character)
-            ESP:AddNameTag(Character)
+            ESP:AddOutline(Char)
+            ESP:AddNameTag(Char)
         end
     end)
 end)
     
 -- Godmode helper (Credits to Egg Salad)
-Player.CharacterAdded:Connect(function(Character)
+Player.CharacterAdded:Connect(function(Char)
     if GodMode_Enabled then
-        local Hum = Character:WaitForChild("Humanoid")
+        local Hum = Char:WaitForChild("Humanoid")
         Hum.Parent = nil;
         Hum.Parent = Character;
     end

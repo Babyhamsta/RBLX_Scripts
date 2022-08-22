@@ -86,8 +86,14 @@ function ClearESP(espname)
     end
 end
 
--- God Mode
-MainSection:AddToggle("God Mode", "Gives you god mode", false, function(bool)
+-- God Mode (Credits to Egg Salad)
+MainSection:AddButton("God Mode", "Gives you god mode", function()
+    local Hum = Character:WaitForChild("Humanoid")
+    Hum.Parent = nil;
+    Hum.Parent = Character;
+end
+
+MainSection:AddButton("Loop God Mode", "Keeps god mode on", false, function(bool)
     GodMode_Enabled = bool;
 end)
 
@@ -155,24 +161,18 @@ game:GetService("Players").PlayerAdded:Connect(function(Player)
         end
     end)
 end)
+    
+-- Godmode helper (Credits to Egg Salad)
+Player.CharacterAdded:Connect(function(Character)
+    if GodMode_Enabled then
+        local Hum = Character:WaitForChild("Humanoid")
+        Hum.Parent = nil;
+        Hum.Parent = Character;
+    end
+end)
 
 
 -- [[ LOOPS ]] --
-
--- God Mode (Credits to FeIix (V3RM) for the idea <3)
-task.spawn(function()
-    while wait(3) do
-        if GodMode_Enabled then
-            pcall(function()
-                local Humanoid = Character:FindFirstChild("Humanoid");
-                Humanoid.Parent = nil;
-                local Cloned = Humanoid:Clone();
-                Cloned.Name = "Humanoid";
-                Cloned.Parent = Character;
-            end)
-        end
-    end
-end)
 
 -- ESP AI
 task.spawn(function()

@@ -16,7 +16,7 @@ local NameColor = Color3.fromRGB(255, 255, 255)
 local NamePositioning = false
 
 local Folder = Instance.new("Folder", game:GetService("CoreGui"))
-Folder.Name = ""
+Folder.Name = "highlights_oof"
 
 AddOutline = function(Character)
    local Highlight = Instance.new("Highlight", Folder)
@@ -52,4 +52,10 @@ AddNameTag = function(Character)
    TextLabel.Font = TextFont
    TextLabel.TextColor3 = NameColor
    TextLabel.TextScaled = NamePositioning
+end
+
+ClearESP = function()
+   for i,v in pairs(Folder:GetChildren())
+      v:Destroy();
+   end
 end

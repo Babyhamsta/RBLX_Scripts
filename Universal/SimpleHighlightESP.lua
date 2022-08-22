@@ -55,7 +55,7 @@ AddNameTag = function(Character)
 end
 
 ClearESP = function()
-   for i,v in pairs(Folder:GetChildren())
+   for i,v in pairs(Folder:GetChildren()) do
       v:Destroy();
    end
 end

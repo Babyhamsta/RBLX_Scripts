@@ -2,7 +2,7 @@
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/Bypasses.lua", true))()
 
 -- Dex with CloneRef Support (made as global)
-getgenv().Bypassed_Dex = game:GetObjects("rbxassetid://9658105655")[1];
+getgenv().Bypassed_Dex = game:GetObjects("rbxassetid://10194917640")[1]; -- swapped to non-beta lazy dex
 
 -- Special GetServices Cache
 local CachedServices = {};

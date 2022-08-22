@@ -99,19 +99,20 @@ MainSection:AddToggle("Loop God Mode", "Keeps god mode on", false, function(bool
     GodMode_Enabled = bool;
 end)
 
+-- Auto Bhop (Credits to Egg Salad)
 MainSection:AddToggle("Auto Bhop", "Simply enable and jump once to start auto hopping", false, function(bool)
     Bhop_Enabled = bool;
-    
+
     if bool then
-    	Character.Humanoid.StateChanged:Connect(function(oldState, newState)
-			if newState == Enum.HumanoidStateType.Landed then
-				task.wait(0.09)
-				VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-				task.wait()
-				VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
-			end
-		end)
-	end
+        Character.Humanoid.StateChanged:Connect(function(oldState, newState)
+            if newState == Enum.HumanoidStateType.Landed then
+                task.wait(0.09)
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
+                task.wait()
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
+            end
+        end)
+    end
 end)
 
 -- Alpha Skin Giver
@@ -178,25 +179,25 @@ game:GetService("Players").PlayerAdded:Connect(function(Player)
         end
     end)
 end)
-    
--- Godmode helper (Credits to Egg Salad)
+
 Player.CharacterAdded:Connect(function(Char)
+    -- Godmode helper (Credits to Egg Salad)
     if GodMode_Enabled then
         local Hum = Char:WaitForChild("Humanoid")
         Hum.Parent = nil;
         Hum.Parent = Char;
     end
-    
+    -- Auto Bhop (Credits to Egg Salad)
     if Bhop_Enabled then
-		Char.Humanoid.StateChanged:Connect(function(oldState, newState)
-			if newState == Enum.HumanoidStateType.Landed then
-				task.wait(0.09)
-				VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-				task.wait()
-				VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
-			end
-		end)
-	end
+        Char.Humanoid.StateChanged:Connect(function(oldState, newState)
+            if newState == Enum.HumanoidStateType.Landed then
+                task.wait(0.09)
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
+                task.wait()
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
+            end
+        end)
+    end
 end)
 
 

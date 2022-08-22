@@ -7,15 +7,15 @@ getgenv().Bypassed_Dex = game:GetObjects("rbxassetid://9658105655")[1];
 -- Special GetServices Cache
 local CachedServices = {};
 local function GhettoGetServices(RequestedService)
-	if not CachedServices[RequestedService] then
-		local temp = cloneref(game:GetService(tostring(RequestedService)))
-		if temp then
-			CachedServices[RequestedService] = temp;
-			return CachedServices[RequestedService];
-		end
-	else
-		return CachedServices[RequestedService];
-	end
+    if not CachedServices[RequestedService] then
+        local temp = cloneref(game:GetService(tostring(RequestedService)))
+        if temp then
+            CachedServices[RequestedService] = temp;
+            return CachedServices[RequestedService];
+        end
+    else
+        return CachedServices[RequestedService];
+    end
 end
 getgenv().GetServices = GhettoGetServices;
 
@@ -24,11 +24,11 @@ for i = 48,  57 do table.insert(charset, string.char(i)) end
 for i = 65,  90 do table.insert(charset, string.char(i)) end
 for i = 97, 122 do table.insert(charset, string.char(i)) end
 local function RandomCharacters(length)
-  if length > 0 then
-    return RandomCharacters(length - 1) .. charset[math.random(#charset)]
-  else
-    return ""
-  end
+    if length > 0 then
+        return RandomCharacters(length - 1) .. charset[math.random(#charset)]
+    else
+        return ""
+    end
 end
 
 Bypassed_Dex.Name = RandomCharacters(math.random(5, 20))
@@ -57,7 +57,7 @@ local function Load(Obj, Url)
         setfenv(Func, Fenv)
         return Func
     end
-    
+
     local function LoadScripts(Script)
         if Script.ClassName == "Script" or Script.ClassName == "LocalScript" then
             task.spawn(GiveOwnGlobals(loadstring(Script.Source, "=" .. Script:GetFullName()), Script))
@@ -66,7 +66,7 @@ local function Load(Obj, Url)
             LoadScripts(v)
         end
     end
-    
+
     LoadScripts(Obj)
 end
 

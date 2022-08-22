@@ -309,7 +309,6 @@ function lib:CreateWindow(title)
                 BackgroundTransparency = 1,
                 Size = UDim2.new(0.7, 0, 1, 0),
                 Font = window.Font,
-                TextTruncate = Enum.TextTruncate.AtEnd,
                 TextXAlignment = Enum.TextXAlignment.Center,
                 Text = tabTitle,
                 TextColor3 = Color3.fromRGB(222, 222, 222),

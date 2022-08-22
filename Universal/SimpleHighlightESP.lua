@@ -3,6 +3,7 @@
    https://v3rmillion.net/member.php?action=profile&uid=2340618
 --]]
 
+local lib = {}
 
 local Outlines = true
 local OutlineColoring = Color3.fromRGB(255, 255, 255)
@@ -18,7 +19,7 @@ local NamePositioning = false
 local Folder = Instance.new("Folder", game:GetService("CoreGui"))
 Folder.Name = "highlights_oof"
 
-AddOutline = function(Character)
+function lib:AddOutline(Character)
    local Highlight = Instance.new("Highlight", Folder)
    
    Highlight.OutlineColor = OutlineColoring
@@ -32,7 +33,7 @@ AddOutline = function(Character)
    end
 end
 
-AddNameTag = function(Character)
+function lib:AddNameTag(Character)
    local BGui = Instance.new("BillboardGui", Folder)
    local Frame = Instance.new("Frame", BGui)
    local TextLabel = Instance.new("TextLabel", Frame)
@@ -54,8 +55,10 @@ AddNameTag = function(Character)
    TextLabel.TextScaled = NamePositioning
 end
 
-ClearESP = function()
+function lib:ClearESP()
    for i,v in pairs(Folder:GetChildren()) do
       v:Destroy();
    end
 end
+
+return lib;

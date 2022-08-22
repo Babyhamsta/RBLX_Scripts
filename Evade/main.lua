@@ -134,9 +134,9 @@ ESPSection:AddButton("Character Highlights", "Highlights all characters to make 
 
     for i, v in ipairs(Players:GetPlayers()) do
         if v ~= Player then
-            v.CharacterAdded:Connect(function(Character)
-                ESP:AddOutline(Character)
-                ESP:AddNameTag(Character)
+            v.CharacterAdded:Connect(function(Char)
+                ESP:AddOutline(Char)
+                ESP:AddNameTag(Char)
             end)
 
             if v.Character then
@@ -167,7 +167,7 @@ Player.CharacterAdded:Connect(function(Char)
     if GodMode_Enabled then
         local Hum = Char:WaitForChild("Humanoid")
         Hum.Parent = nil;
-        Hum.Parent = Character;
+        Hum.Parent = Char;
     end
 end)
 

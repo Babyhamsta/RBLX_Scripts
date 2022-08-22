@@ -159,16 +159,16 @@ end)
 
 -- [[ LOOPS ]] --
 
--- God Mode (Credits to FeIix (V3RM) <3)
+-- God Mode (Credits to FeIix (V3RM) for the idea <3)
 task.spawn(function()
     while wait(3) do
         if GodMode_Enabled then
             pcall(function()
                 local Humanoid = Character:FindFirstChild("Humanoid");
                 Humanoid.Parent = nil;
-                Humanoid:Clone();
-                Humanoid.Name = "Humanoid";
-                Humanoid.Parent = Character;
+                local Cloned = Humanoid:Clone();
+                Cloned.Name = "Humanoid";
+                Cloned.Parent = Character;
             end)
         end
     end

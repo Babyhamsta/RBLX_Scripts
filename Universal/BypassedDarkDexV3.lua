@@ -1,8 +1,12 @@
+if Bypassed_Dex then return end
 -- Cloneref support (adds support for JJsploit/Temple/Electron and other sploits that don't have cloneref or really shit versions of it.)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/CloneRef.lua", true))()
 
 -- Dex Bypasses
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/Bypasses.lua", true))()
+
+-- Iris's Instance Protect
+loadstring(game:HttpGet("https://api.irisapp.ca/Scripts/IrisInstanceProtect.lua"))()
 
 -- Dex with CloneRef Support (made as global)
 getgenv().Bypassed_Dex = game:GetObjects("rbxassetid://9352453730")[1]
@@ -20,15 +24,8 @@ function RandomCharacters(length)
 end
 
 Bypassed_Dex.Name = RandomCharacters(math.random(5, 20))
-if gethui then
-    Bypassed_Dex.Parent = gethui();
-elseif syn and syn.protect_gui then
-    syn.protect_gui(Bypassed_Dex);
-    Bypassed_Dex.Parent = cloneref(game:GetService("CoreGui"))
-else
-    Bypassed_Dex.Parent = cloneref(game:GetService("CoreGui"))
-end
-
+(syn and syn.protect_gui or ProtectInstance)(Bypassed_Dex) 
+Bypassed_Dex.Parent = (gethui and gethui() or cloneref(game:GetService("CoreGui")))
 local function Load(Obj, Url)
     local function GiveOwnGlobals(Func, Script)
         local Fenv = {}

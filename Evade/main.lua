@@ -193,7 +193,7 @@ Player.CharacterAdded:Connect(function(Char)
         Hum.Parent = nil;
         Hum.Parent = Char;
     end
-    -- Auto Bhop (Credits to Egg Salad)
+    -- Auto Bhop (Credits to Egg Salad) 
     if Bhop_Enabled then
         Char.Humanoid.StateChanged:Connect(function(oldState, newState)
             if newState == Enum.HumanoidStateType.Landed then

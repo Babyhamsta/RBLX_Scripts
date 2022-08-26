@@ -40,7 +40,7 @@ local Highlights_Active = false;
 local AI_ESP = false;
 local GodMode_Enabled = false;
 local Bhop_Enabled = false;
-local Bhop_Cooldown = 0.9;
+local Bhop_Cooldown = 0.5;
 
 -- Simple Text ESP
 function Simple_Create(base, name, trackername, studs)
@@ -106,17 +106,16 @@ BhopSection:AddToggle("Auto Bhop", "Simply enable and jump once to start auto ho
     Bhop_Enabled = bool;
 
     if bool then
-        Character.Humanoid:GetPropertyChangedSignal("FloorMaterial"):Connect(function()
-            if Character.Humanoid.FloorMaterial == Enum.Material.Air then return; end
-            task.wait(Bhop_Cooldown)
-            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-            task.wait()
-            VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
+        Character.Humanoid.StateChanged:Connect(function(oldState, newState)
+            if newState == Enum.HumanoidStateType.Landed then
+                task.wait(Bhop_Cooldown)
+                Humanoid.Jump = true;
+            end
         end)
     end
 end)
 
-BhopSection:AddSlider("Bhop cooldown", "Adjust to higher number if bhop stops jumping randomly (default 0.9 secs).", 0, 1.3, 0.9, true, function(val)
+BhopSection:AddSlider("Bhop cooldown", "Adjust to higher number if bhop stops jumping randomly (default 0.5 secs).", 0, 1.3, 0.5, true, function(val)
     Bhop_Cooldown = tonumber(val);
 end)
 
@@ -210,7 +209,7 @@ end)
 
 -- ESP AI
 task.spawn(function()
-    while wait(0.3) do
+    while task.wait(0.05) do
         if AI_ESP then
             pcall(function()
                 ClearESP("AI_Tracker")

@@ -36,9 +36,9 @@ if gethui then
     Bypassed_Dex.Parent = gethui();
 elseif syn and syn.protect_gui then
     syn.protect_gui(Bypassed_Dex);
-    Bypassed_Dex.Parent = cloneref(game:GetService("CoreGui"))
+    Bypassed_Dex.Parent = GetServices("CoreGui");
 else
-    Bypassed_Dex.Parent = cloneref(game:GetService("CoreGui"))
+    Bypassed_Dex.Parent = GetServices("CoreGui");
 end
 
 local function Load(Obj, Url)

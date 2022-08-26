@@ -108,8 +108,10 @@ BhopSection:AddToggle("Auto Bhop", "Simply enable and jump once to start auto ho
     if bool then
         Character.Humanoid.StateChanged:Connect(function(oldState, newState)
             if newState == Enum.HumanoidStateType.Landed then
-                task.wait(Bhop_Cooldown)
-                Humanoid.Jump = true;
+                task.wait(0.05)
+                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
+                task.wait()
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
             end
         end)
     end

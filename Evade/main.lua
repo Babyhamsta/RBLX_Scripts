@@ -106,13 +106,12 @@ BhopSection:AddToggle("Auto Bhop", "Simply enable and jump once to start auto ho
     Bhop_Enabled = bool;
 
     if bool then
-        Character.Humanoid.StateChanged:Connect(function(oldState, newState)
-            if newState == Enum.HumanoidStateType.Landed then
-                task.wait(Bhop_Cooldown)
-                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-                task.wait()
-                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
-            end
+        Character.Humanoid:GetPropertyChangedSignal("FloorMaterial"):Connect(function()
+            if Character.Humanoid.FloorMaterial == Enum.Material.Air then return; end
+            task.wait(Bhop_Cooldown)
+            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
+            task.wait()
+            VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
         end)
     end
 end)

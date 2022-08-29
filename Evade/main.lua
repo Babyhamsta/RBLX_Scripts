@@ -1,4 +1,4 @@
--- [[ HamstaGang on V3RM | Last updated 08/28/2022 ]] --
+-- [[ HamstaGang on V3RM | Last updated 08/21/2022 ]] --
 
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage");
@@ -30,7 +30,7 @@ local ServerPage = Window:NewTab("Server")
 local ESPPage = Window:NewTab("ESP")
 
 -- Create Sections
-local MainSection = MainPage:AddSection("Main")
+local MainSection = MainPage:AddSection("Character")
 local InventorySection = MainPage:AddSection("Inventory")
 local ServerSection = ServerPage:AddSection("Server")
 local ESPSection = ESPPage:AddSection("ESP")
@@ -128,6 +128,14 @@ MainSection:AddButton("Full Bright", "For users who are scared of the dark :(", 
     Lighting.Brightness = 2;
     Lighting.Ambient = Color3.fromRGB(255,255,255)
     Lighting.FogColor = Color3.fromRGB(255,255,255)
+end)
+
+MainSection:AddSlider("WalkSpeed", "Adjust WalkSpeed to be speed", 1450, 10000, 1450, true, function(val)
+    Character:WaitForChild("Humanoid", 1337):SetAttribute("RealSpeed", tonumber(val));
+end)
+
+MainSection:AddSlider("JumpPower", "Adjust JumpPower and dunk", 3, 15, 3, true, function(val)
+    Character:WaitForChild("Humanoid", 1337):SetAttribute("RealJumpHeight", tonumber(val));
 end)
 
 -- Alpha Skin Giver

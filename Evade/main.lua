@@ -1,4 +1,4 @@
--- [[ HamstaGang on V3RM | Last updated 08/21/2022 ]] --
+-- [[ HamstaGang on V3RM | Last updated 08/29/2022 ]] --
 
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage");
@@ -32,12 +32,13 @@ local ESPPage = Window:NewTab("ESP")
 local MainSection = MainPage:AddSection("Character")
 local InventorySection = MainPage:AddSection("Inventory")
 local ServerSection = ServerPage:AddSection("Server")
-local ESPSection = ESPPage:AddSection("ESP")
+local ESPSection = ESPPage:AddSection("ESP/Camera")
 
 -- GUI Toggles / Settings
 local Highlights_Active = false;
 local AI_ESP = false;
 local GodMode_Enabled = false;
+local No_CamShake = false;
 
 -- Simple Text ESP
 function Simple_Create(base, name, trackername, studs)
@@ -198,6 +199,14 @@ ESPSection:AddToggle("AI ESP", "Adds text ESP to AI to make them easier to see."
     AI_ESP = bool;
 end)
 
+-- No Camera Shake
+ESPSection:AddToggle("No Camera Shake", "Removes camera shake that is caused by the AI.", false, function(bool)
+    No_CamShake = bool;
+end)
+
+
+-- [[ Helpers / Loop Funcs ]] --
+
 -- Highlight helper
 game:GetService("Players").PlayerAdded:Connect(function(Player)
     Player.CharacterAdded:Connect(function(Char)
@@ -208,6 +217,7 @@ game:GetService("Players").PlayerAdded:Connect(function(Player)
     end)
 end)
 
+-- Target only Local Player
 Player.CharacterAdded:Connect(function(Char)
     local Hum = Char:WaitForChild("Humanoid", 1337);
 
@@ -218,8 +228,6 @@ Player.CharacterAdded:Connect(function(Char)
     end
 end)
 
-
--- [[ LOOPS ]] --
 
 -- ESP AI
 task.spawn(function()
@@ -237,6 +245,15 @@ task.spawn(function()
             end)
         else
             ClearESP("AI_Tracker");
+        end
+    end
+end)
+
+-- Camera Shake
+task.spawn(function()
+    while task.wait() do
+        if No_CamShake then
+            Player.PlayerScripts:WaitForChild("CameraShake", 1234).Value = CFrame.new(0,0,0) * CFrame.Angles(0,0,0);
         end
     end
 end)

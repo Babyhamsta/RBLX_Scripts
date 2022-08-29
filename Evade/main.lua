@@ -27,15 +27,17 @@ local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamst
 local Window = lib:CreateWindow("Evade Gui")
 
 -- Create Pages
-local MainPage = Window:NewTab("Main")
+local CharPage = Window:NewTab("Character")
+local InvePage = Window:NewTab("Inventory")
 local ServerPage = Window:NewTab("Server")
-local ESPPage = Window:NewTab("ESP")
+local ESPPage = Window:NewTab("ESP/Camera")
 
 -- Create Sections
-local MainSection = MainPage:AddSection("Character")
-local InventorySection = MainPage:AddSection("Inventory")
+local MainSection = CharPage:AddSection("Character")
+local InventorySection = InvePage:AddSection("Inventory")
 local ServerSection = ServerPage:AddSection("Server")
-local ESPSection = ESPPage:AddSection("ESP/Camera")
+local ESPSection = ESPPage:AddSection("ESP")
+local CamSection = ESPPage:AddSection("Camera")
 
 -- GUI Toggles / Settings
 local Highlights_Active = false;
@@ -206,7 +208,7 @@ ESPSection:AddToggle("AI ESP", "Adds text ESP to AI to make them easier to see."
 end)
 
 -- No Camera Shake
-ESPSection:AddToggle("No Camera Shake", "Removes camera shake that is caused by the AI.", false, function(bool)
+CamSection:AddToggle("No Camera Shake", "Removes camera shake that is caused by the AI.", false, function(bool)
     No_CamShake = bool;
 end)
 

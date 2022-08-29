@@ -131,11 +131,13 @@ MainSection:AddButton("Full Bright", "For users who are scared of the dark :(", 
 end)
 
 MainSection:AddSlider("WalkSpeed", "Adjust WalkSpeed to be speed", 1450, 10000, 1450, true, function(val)
-    Character:WaitForChild("Humanoid", 1337):SetAttribute("RealSpeed", tonumber(val));
+    local Humanoid = Character:WaitForChild("Humanoid", 1337);
+    Humanoid:SetAttribute("RealSpeed", tonumber(val));
 end)
 
 MainSection:AddSlider("JumpPower", "Adjust JumpPower and dunk", 3, 15, 3, true, function(val)
-    Character:WaitForChild("Humanoid", 1337):SetAttribute("RealJumpHeight", tonumber(val));
+    local Humanoid = Character:WaitForChild("Humanoid", 1337);
+    Humanoid:SetAttribute("RealJumpHeight", tonumber(val));
 end)
 
 -- Alpha Skin Giver

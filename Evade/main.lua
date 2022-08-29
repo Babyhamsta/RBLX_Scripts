@@ -1,5 +1,8 @@
 -- [[ HamstaGang on V3RM | Last updated 08/29/2022 ]] --
 
+-- Wait for game to load
+repeat task.wait() until game:IsLoaded();
+
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage");
 local CoreGui = game:GetService("CoreGui");
@@ -39,6 +42,9 @@ local Highlights_Active = false;
 local AI_ESP = false;
 local GodMode_Enabled = false;
 local No_CamShake = false;
+
+-- Anti AFK
+for i,v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do v:Disable() end
 
 -- Simple Text ESP
 function Simple_Create(base, name, trackername, studs)

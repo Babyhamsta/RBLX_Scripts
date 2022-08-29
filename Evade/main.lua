@@ -1,4 +1,4 @@
--- [[ HamstaGang on V3RM | Last updated 08/21/2022 ]] --
+-- [[ HamstaGang on V3RM | Last updated 08/28/2022 ]] --
 
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage");
@@ -31,7 +31,7 @@ local ESPPage = Window:NewTab("ESP")
 
 -- Create Sections
 local MainSection = MainPage:AddSection("Main")
-local BhopSection = MainPage:AddSection("Bhop")
+local InventorySection = MainPage:AddSection("Inventory")
 local ServerSection = ServerPage:AddSection("Server")
 local ESPSection = ESPPage:AddSection("ESP")
 
@@ -39,8 +39,6 @@ local ESPSection = ESPPage:AddSection("ESP")
 local Highlights_Active = false;
 local AI_ESP = false;
 local GodMode_Enabled = false;
-local Bhop_Enabled = false;
-local Bhop_Cooldown = 0.5;
 
 -- Simple Text ESP
 function Simple_Create(base, name, trackername, studs)
@@ -99,31 +97,24 @@ end)
 
 MainSection:AddToggle("Loop God Mode", "Keeps god mode on", false, function(bool)
     GodMode_Enabled = bool;
-end)
 
--- Auto Bhop (Credits to Egg Salad)
-BhopSection:AddToggle("Auto Bhop", "Simply enable and jump once to start auto hopping", false, function(bool)
-    Bhop_Enabled = bool;
-
-    if bool then
-        Character.Humanoid.StateChanged:Connect(function(oldState, newState)
-            if newState == Enum.HumanoidStateType.Landed then
-                task.wait(0.05)
-                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-                task.wait()
-                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
-            end
-        end)
+    if bool then -- just incase they only enable the toggle..
+        local Hum = Character:WaitForChild("Humanoid")
+        Hum.Parent = nil;
+        Hum.Parent = Char;
     end
 end)
 
-BhopSection:AddSlider("Bhop cooldown", "Adjust to higher number if bhop stops jumping randomly (default 0.5 secs).", 0, 1.3, 0.5, true, function(val)
-    Bhop_Cooldown = tonumber(val);
-end)
+-- Respawn/Reset
+MainSection:AddButton("Respawn", "Free respawn, no need to pay 15 robux!", function()
+    local Reset = Events:FindFirstChild("Reset")
+    local Respawn = Events:FindFirstChild("Respawn")
 
--- Alpha Skin Giver
-MainSection:AddButton("Alpha Skin", "Gives you the private alpha skin", function()
-    Events.UI.Purchase:InvokeServer("Skins", "AlphaTester")
+    if Reset and Respawn then
+        Reset:FireServer();
+        task.wait(2)
+        Respawn:FireServer();
+    end
 end)
 
 -- Make server all bright so your eye balls can see
@@ -139,12 +130,28 @@ MainSection:AddButton("Full Bright", "For users who are scared of the dark :(", 
     Lighting.FogColor = Color3.fromRGB(255,255,255)
 end)
 
+-- Alpha Skin Giver
+InventorySection:AddButton("Alpha Skin", "Gives you the private alpha skin", function()
+    Events.UI.Purchase:InvokeServer("Skins", "AlphaTester")
+end)
+
+-- Boombox Giver (Frog#5989)
+InventorySection:AddButton("Boombox Skin", "Gives you the Boombox skin for free!", function()
+    Events.UI.Purchase:InvokeServer("Skins", "AlphaTester")
+end)
+
+-- Emote Giver (Frog#5989)
+InventorySection:AddButton("Dev Test Emote", "Gives you the private test emote.", function()
+    Events.UI.Purchase:InvokeServer("Skins", "AlphaTester")
+end)
 
 -- Crash Server (Credits to FeIix (V3RM) <3)
 ServerSection:AddButton("Crash Server", "Crashes the server", function()
+    local Reset = Events:FindFirstChild("Reset")
     local Respawn = Events:FindFirstChild("Respawn")
     while task.wait() do
-        if Respawn then
+        if Reset and Respawn then
+            Reset:FireServer()
             Respawn:FireServer()
         end
     end
@@ -187,22 +194,12 @@ game:GetService("Players").PlayerAdded:Connect(function(Player)
 end)
 
 Player.CharacterAdded:Connect(function(Char)
+    local Hum = Char:WaitForChild("Humanoid", 1337);
+
     -- Godmode helper (Credits to Egg Salad)
     if GodMode_Enabled then
-        local Hum = Char:WaitForChild("Humanoid")
         Hum.Parent = nil;
         Hum.Parent = Char;
-    end
-    -- Auto Bhop (Credits to Egg Salad) 
-    if Bhop_Enabled then
-        Char.Humanoid.StateChanged:Connect(function(oldState, newState)
-            if newState == Enum.HumanoidStateType.Landed then
-                task.wait(Bhop_Cooldown)
-                VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-                task.wait()
-                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
-            end
-        end)
     end
 end)
 

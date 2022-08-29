@@ -149,12 +149,12 @@ end)
 
 -- Boombox Giver (Frog#5989)
 InventorySection:AddButton("Boombox Skin", "Gives you the Boombox skin for free!", function()
-    Events.UI.Purchase:InvokeServer("Skins", "AlphaTester")
+    Events.UI.Purchase:InvokeServer("Skins", "Boombox")
 end)
 
 -- Emote Giver (Frog#5989)
 InventorySection:AddButton("Dev Test Emote", "Gives you the private test emote.", function()
-    Events.UI.Purchase:InvokeServer("Skins", "AlphaTester")
+    Events.UI.Purchase:InvokeServer("Emotes", "Test")
 end)
 
 -- Crash Server (Credits to FeIix (V3RM) <3)

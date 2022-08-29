@@ -13,7 +13,6 @@ local Events = ReplicatedStorage:WaitForChild("Events", 1337)
 
 -- Local Player
 local Player = Players.LocalPlayer;
-local Character = Player.Character or Player.CharacterAdded:Wait()
 
 -- UI Lib (Fluxus Lib because I like to shuffle them and they support WEAO <3)
 local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/UILibs/FluxusUI.lua"))()
@@ -90,6 +89,7 @@ end
 
 -- God Mode (Credits to Egg Salad)
 MainSection:AddButton("God Mode", "Gives you god mode", function()
+    local Character = Player.Character or Player.CharacterAdded:Wait()
     local Hum = Character:WaitForChild("Humanoid")
     Hum.Parent = nil;
     Hum.Parent = Character;
@@ -99,6 +99,7 @@ MainSection:AddToggle("Loop God Mode", "Keeps god mode on", false, function(bool
     GodMode_Enabled = bool;
 
     if bool then -- just incase they only enable the toggle..
+        local Character = Player.Character or Player.CharacterAdded:Wait()
         local Hum = Character:WaitForChild("Humanoid")
         Hum.Parent = nil;
         Hum.Parent = Char;
@@ -132,12 +133,14 @@ end)
 
 MainSection:AddSlider("WalkSpeed", "Adjust WalkSpeed to be speed", 1450, 10000, 1450, true, function(val)
     pcall(function()
+        local Character = Player.Character;
         Character.Humanoid:SetAttribute("RealSpeed", tonumber(val));
     end)
 end)
 
 MainSection:AddSlider("JumpPower", "Adjust JumpPower and dunk", 3, 15, 3, true, function(val)
     pcall(function()
+        local Character = Player.Character;
         Character.Humanoid:SetAttribute("RealJumpHeight", tonumber(val));
     end)
 end)

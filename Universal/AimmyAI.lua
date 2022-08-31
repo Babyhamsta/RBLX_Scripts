@@ -21,6 +21,7 @@ local Char = Plr.Character or Plr.CharacterAdded:Wait();
 local Head = Char:WaitForChild("Head", 1337);
 local Root = Char:WaitForChild("HumanoidRootPart", 1337);
 local Humanoid = Char:WaitForChild("Humanoid", 1337);
+local AliveStat = Plr:WaitForChild("Status", 1337):WaitForChild("Alive").Value;
 
 -- GUI Stuff
 local MainMenu = Plr.PlayerGui:WaitForChild("Menew", 1337);
@@ -102,7 +103,7 @@ local function Aimlock()
 
 	-- Detect first visible part
 	if ClosestPlr and ClosestPlr.Character then
-		for i,v in ipairs(ClosestPlr.Character:GetChildren()) do
+		for i,v in pairs(ClosestPlr.Character:GetChildren()) do
 			if v and v:IsA("Part") then -- is part
 				if IsVisible(v.Position,{Camera,Char,ClosestPlr.Character,RayIgnore,MapIgnore}) then -- is visible
 					aimpart = v;
@@ -119,9 +120,9 @@ local function Aimlock()
 		local tcamcframe = Camera.CFrame;
 		for i = 0, 1, AimSens do
 			if not aimpart then break; end
-			if (Head.Position.Y + aimpart.Position.Y) < 0 then break; end -- Stop bot from aiming at the ground
+			if (Head.Position.Y + aimpart.Position.Y) < 2 then break; end -- Stop bot from aiming at the ground
 			Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
-			task.wait(0)
+			task.wait()
 		end
 
 		-- Mouse down and back up
@@ -135,25 +136,25 @@ end
 
 -- Auto Spawn
 local function AutoSpawn()
-    if MainMenu.Enabled then
-        -- Fire play button
-        firesignal(PlayButton.MouseButton1Down);
+	if MainMenu.Enabled then
+		-- Fire play button
+		firesignal(PlayButton.MouseButton1Down);
 
-        -- Wait for GUI to change
-        repeat task.wait(0.5) until TeamSelection.Visible;
+		-- Wait for GUI to change
+		repeat task.wait(0.5) until TeamSelection.Visible;
 
-        -- Buttons check and auto team select
-        if TeamSelection:FindFirstChild("Buttons").Visible then -- normal
-            for i, teamButton in pairs(TeamSelection:FindFirstChild("Buttons"):GetChildren()) do
-                if table.find(buttonColors, teamButton.Name) and not teamButton.lock.Visible then
-                    firesignal(teamButton.MouseButton1Down);
-                    break;
-                end
-        end
-        elseif TeamSelection:FindFirstChild("ButtonsFFA").Visible then -- FFA
-            firesignal(TeamSelection:FindFirstChild("ButtonsFFA").FFA.MouseButton1Down);
-        end
-    end
+		-- Buttons check and auto team select
+		if TeamSelection:FindFirstChild("Buttons").Visible then -- normal
+			for i, teamButton in pairs(TeamSelection:FindFirstChild("Buttons"):GetChildren()) do
+				if table.find(buttonColors, teamButton.Name) and not teamButton.lock.Visible then
+					firesignal(teamButton.MouseButton1Down);
+					break;
+				end
+			end
+		elseif TeamSelection:FindFirstChild("ButtonsFFA").Visible then -- FFA
+			firesignal(TeamSelection:FindFirstChild("ButtonsFFA").FFA.MouseButton1Down);
+		end
+	end
 end
 
 -- Pathfinding to Plr function
@@ -164,20 +165,18 @@ WalkToObject = function()
 		if CRoot then
 			-- Get start position
 			InitialPosition = CRoot.Position;
-			
+
 			-- Calculate path
 			local success, errorMessage = pcall(function()
 				currpath:ComputeAsync(Root.Position, CRoot.Position)
 			end)
-			
-			if success and currpath.Status == Enum.PathStatus.Success then
-				local waypoints = currpath:GetWaypoints();
 
+			if success and currpath.Status == Enum.PathStatus.Success then
 				-- Navigate to each waypoint
-				for i, wap in pairs(waypoints) do
+				for i, wap in pairs(currpath:GetWaypoints()) do
 					-- Catcher
 					if i == 1 then continue end -- skip first waypoint
-					if not ClosestPlr or not ClosestPlr.Character or ClosestPlr ~= getClosestPlr() or not ClosestPlr:FindFirstChild("Status").Alive.Value or not Plr:FindFirstChild("Status").Alive.Value then
+					if not ClosestPlr or not ClosestPlr.Character or ClosestPlr ~= getClosestPlr() or not ClosestPlr:FindFirstChild("Status").Alive.Value or not AliveStat then
 						ClosestPlr = nil;
 						return;
 					elseif (InitialPosition - CRoot.Position).Magnitude > RecalDis  then -- moved too far from start
@@ -213,29 +212,7 @@ WalkToObject = function()
 									Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, Vector3.new(wap.Position.X,mixedaim,wap.Position.Z)), i);
 								end
 							end
-							task.wait(0)
-						end
-					end)
-
-					-- Auto Knife out (for faster running and realism)
-					task.spawn(function()
-						local primary = ClosestPlr.Character.PrimaryPart.Position;
-						local studs = Plr:DistanceFromCharacter(primary)
-
-						if primary and studs then
-							local arms = Camera:FindFirstChild("Arms");
-							if arms then
-								arms = arms:FindFirstChild("Real");
-								if math.floor(studs + 0.5) > KnifeOutDis and not IsVisible(primary, {Camera,Char,ClosestPlr.Character,RayIgnore,MapIgnore}) then
-									if arms.Value ~= "Knife" and CurrentEquipped == "Gun" then
-										VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game);
-										CurrentEquipped = "Knife";
-									end
-								elseif arms.Value == "Knife" and CurrentEquipped ~= "Gun" then
-									VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game);
-									CurrentEquipped = "Gun";
-								end
-							end
+							task.wait()
 						end
 					end)
 
@@ -261,7 +238,7 @@ local function WalkToPlr()
 
 	-- Walk to Plr
 	if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character:FindFirstChild("HumanoidRootPart") then
-		if Humanoid.WalkSpeed > 0 and Plr:FindFirstChild("Status").Alive.Value and ClosestPlr:FindFirstChild("Status").Alive.Value then
+		if Humanoid.WalkSpeed > 0 and AliveStat and ClosestPlr:FindFirstChild("Status").Alive.Value then
 			--Create ESP
 			local studs = Plr:DistanceFromCharacter(ClosestPlr.Character.PrimaryPart.Position)
 			SESP_Create(ClosestPlr.Character.Head, ClosestPlr.Name, "TempTrack", Color3.new(1, 0, 0), math.floor(studs + 0.5));
@@ -280,14 +257,16 @@ end
 -- Loop Auto Spawn
 task.spawn(function()
 	while task.wait(0.5) do
-		AutoSpawn();
+		if not AliveStat then
+			AutoSpawn();
+		end
 	end
 end)
 
 -- Loop Pathfind
 task.spawn(function()
 	while task.wait() do
-		if (ClosestPlr == nil or ClosestPlr ~= getClosestPlr()) then
+		if (not ClosestPlr or ClosestPlr ~= getClosestPlr()) and AliveStat then
 			SESP_Clear("TempTrack");
 			WalkToPlr();
 		end
@@ -297,9 +276,37 @@ end)
 -- Loop Aimlock
 task.spawn(function()
 	while task.wait() do
-		if ClosestPlr ~= nil and Camera then
-			if Plr:FindFirstChild("Status").Alive.Value and Humanoid.WalkSpeed > 0 then
+		if ClosestPlr and Camera then
+			if AliveStat and Humanoid.WalkSpeed > 0 then
 				Aimlock();
+			end
+		end
+	end
+end)
+
+-- Loop Auto Knife out (for faster running and realism)
+task.spawn(function()
+	while task.wait() do
+		if Char and AliveStat then
+			if ClosestPlr and ClosestPlr.Character and ClosestPlr.Character.PrimaryPart then
+				local primary = ClosestPlr.Character.PrimaryPart.Position;
+				local studs = Plr:DistanceFromCharacter(primary)
+
+				if primary and studs then
+					local arms = Camera:FindFirstChild("Arms");
+					if arms then
+						arms = arms:FindFirstChild("Real");
+						if math.floor(studs + 0.5) > KnifeOutDis and not IsVisible(primary, {Camera, Char, ClosestPlr.Character, RayIgnore, MapIgnore}) then
+							if arms.Value ~= "Knife" and CurrentEquipped == "Gun" then
+								VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game);
+								CurrentEquipped = "Knife";
+							end
+						elseif arms.Value == "Knife" and CurrentEquipped ~= "Gun" then
+							VIM:SendKeyEvent(true, Enum.KeyCode.Q, false, game);
+							CurrentEquipped = "Gun";
+						end
+					end
+				end
 			end
 		end
 	end

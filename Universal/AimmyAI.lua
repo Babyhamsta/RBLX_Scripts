@@ -120,7 +120,7 @@ local function Aimlock()
 		local tcamcframe = Camera.CFrame;
 		for i = 0, 1, AimSens do
 			if not aimpart then break; end
-			if (Head.Position.Y + aimpart.Position.Y) < 2 then break; end -- Stop bot from aiming at the ground
+			if aimpart.Position.Y < -300 then break; end -- Stop bot from aiming at the ground
 			Camera.CFrame = tcamcframe:Lerp(CFrame.new(Camera.CFrame.p, aimpart.Position), i)
 			task.wait()
 		end

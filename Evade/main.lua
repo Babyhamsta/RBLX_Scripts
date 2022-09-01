@@ -3,6 +3,9 @@
 -- Wait for game to load
 repeat task.wait() until game:IsLoaded();
 
+-- Temp fix for ROBLOX turning off highlights
+if setfflag then setfflag("OutlineSelection", "true") end
+
 -- Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage");
 local CoreGui = game:GetService("CoreGui");

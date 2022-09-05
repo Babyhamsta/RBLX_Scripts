@@ -463,8 +463,7 @@ table.insert(cors,sandbox(LocalScript0,function()
 	do
 		local enabled = false
 		
-		getgenv().ToggleFreecam;
-		ToggleFreecam = function()
+		getgenv().ToggleFreecam = function()
 			if enabled then
 				StopFreecam()
 			else

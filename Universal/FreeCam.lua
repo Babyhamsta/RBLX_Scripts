@@ -1,4 +1,4 @@
--- Forked from Bladefury on V3RM (Modded to have global toggle)
+--Converted with ttyyuu12345's model to script plugin v4
 function sandbox(var,func)
 	local env = getfenv(func)
 	local newenv = setmetatable({},{
@@ -59,7 +59,6 @@ table.insert(cors,sandbox(LocalScript0,function()
 
 	local TOGGLE_INPUT_PRIORITY = Enum.ContextActionPriority.Low.Value
 	local INPUT_PRIORITY = Enum.ContextActionPriority.High.Value
-	local FREECAM_MACRO_KB = {Enum.KeyCode.LeftShift, Enum.KeyCode.P}
 
 	local NAV_GAIN = Vector3.new(1, 1, 1)*64
 	local PAN_GAIN = Vector2.new(0.75, 1)*8
@@ -485,15 +484,11 @@ table.insert(cors,sandbox(LocalScript0,function()
 
 		local function HandleActivationInput(action, state, input)
 			if state == Enum.UserInputState.Begin then
-				if input.KeyCode == FREECAM_MACRO_KB[#FREECAM_MACRO_KB] then
-					CheckMacro(FREECAM_MACRO_KB)
-				end
+
 			end
 			return Enum.ContextActionResult.Pass
 		end
-
-		ContextActionService:BindActionAtPriority("FreecamToggle", HandleActivationInput, false, TOGGLE_INPUT_PRIORITY, FREECAM_MACRO_KB[#FREECAM_MACRO_KB])
-	end
+			end
 end))
 
 for i,v in pairs(mas:GetChildren()) do

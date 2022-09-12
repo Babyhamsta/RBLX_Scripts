@@ -1,6 +1,8 @@
 -- Wait for game
 repeat task.wait() until game:IsLoaded();
 
+messagebox("This script has been patched, do not use without updating");
+
 -- Game Globals
 local _Network = getrenv()._G.Network;
 local _Player = getrenv()._G.Player;
@@ -90,7 +92,7 @@ local anticam
 anticam = hookmetamethod(game, "__index", newcclosure(function(...)
     local self, k = ...
 
-    if not checkcaller() and k == "CFrame" and self.Name == "Camera" then
+    if not checkcaller() and k == "CFrame" and self.Name == "Camera" and self == Camera then
         return _Camera.GetCFrame()
     end
 

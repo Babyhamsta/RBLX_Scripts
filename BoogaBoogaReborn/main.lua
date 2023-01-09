@@ -19,7 +19,7 @@ local Root = Char:WaitForChild("HumanoidRootPart", 9e9);
 -- Toggles
 local NoSlowdown = false;
 local AutoPickup = false;
-local AutoHarvist = false;
+local AutoHarvest = false;
 local KillAura = false;
 
 -- UI Lib
@@ -174,11 +174,11 @@ function GetClosestFarmItem()
      return ConvertToTable(Closest, false);
 end
 
-AtSection1:addToggle("Auto Harvist", nil, function(value)
-AutoHarvist = value;
-if (AutoHarvist) then
+AtSection1:addToggle("Auto Harvest", nil, function(value)
+AutoHarvest = value;
+if (AutoHarvest) then
      task.spawn(function()
-     while (AutoHarvist and task.wait()) do
+     while (AutoHarvest and task.wait()) do
           local temp = GetClosestFarmItem()
           if (#temp > 0) then -- avoid spamming
                SwingTool:FireServer(ReplicatedStorage:WaitForChild("RelativeTime", 9e9).Value, temp)

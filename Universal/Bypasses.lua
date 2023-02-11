@@ -82,7 +82,8 @@ task.spawn(function()
     local Rand = 0
 
     RunService.Stepped:Connect(function()
-        Rand = math.random(-10,10)
+        local random = Random.new()
+    	Rand = random:NextNumber(-10, 10);
     end)
 
     local function GetReturn()
@@ -123,7 +124,8 @@ task.spawn(function()
     local Rand = 0
 
     RunService.Stepped:Connect(function()
-        Rand = math.random(-0.1,0.1)
+    	local random = Random.new()
+    	Rand = random:NextNumber(-0.1, 0.1);
     end)
 
     local function GetReturn()
@@ -136,6 +138,7 @@ task.spawn(function()
 
         if not checkcaller() then
             if typeof(self) == "Instance" and (method == "GetMemoryUsageMbForTag" or method == "getMemoryUsageMbForTag") and self.ClassName == "Stats" then
+                warn(GetReturn())
                 return GetReturn();
             end
         end
@@ -147,6 +150,7 @@ task.spawn(function()
     local _MemBypassIndex; _MemBypassIndex = hookfunction(Stats.GetMemoryUsageMbForTag, function(self, ...)
         if not checkcaller() then
             if typeof(self) == "Instance" and self.ClassName == "Stats" then
+            	warn(GetReturn())
                 return GetReturn();
             end
         end

@@ -138,7 +138,6 @@ task.spawn(function()
 
         if not checkcaller() then
             if typeof(self) == "Instance" and (method == "GetMemoryUsageMbForTag" or method == "getMemoryUsageMbForTag") and self.ClassName == "Stats" then
-                warn(GetReturn())
                 return GetReturn();
             end
         end
@@ -150,7 +149,6 @@ task.spawn(function()
     local _MemBypassIndex; _MemBypassIndex = hookfunction(Stats.GetMemoryUsageMbForTag, function(self, ...)
         if not checkcaller() then
             if typeof(self) == "Instance" and self.ClassName == "Stats" then
-            	warn(GetReturn())
                 return GetReturn();
             end
         end

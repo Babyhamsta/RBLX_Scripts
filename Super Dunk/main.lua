@@ -78,7 +78,7 @@ AutoFarm:Toggle("Auto Rebirth", false, "AutoRebirth_Toggle", function(bool)
 end)
 
 -- Free Gamepasses
-Other:Button("Free GamePpasses (ONLY SOME)", function()
+Other:Button("Free Gamepasses (ONLY SOME)", function()
     -- Spoof Gamepass Check
     Monetization_Client.CheckOwnsPass = function() return true; end
 end)

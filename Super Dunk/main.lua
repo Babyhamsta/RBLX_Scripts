@@ -46,7 +46,7 @@ AutoFarm:Toggle("Auto Dribble", false, "AutoDribble_Toggle", function(bool)
     AutoDribble_Toggle = bool;
     if AutoDribble_Toggle then
         task.spawn(pcall(function()
-            while AutoDribble_Toggle and task.wait(0.5) do
+            while AutoDribble_Toggle and task.wait(0.3) do
                 Network:FireServer("Jump.Dribbled");
             end
         end))

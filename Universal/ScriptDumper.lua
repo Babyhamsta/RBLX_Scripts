@@ -30,7 +30,7 @@ local Configuration = {
     },
 
     StringFormats = {
-        Welcome = "Welcome to savescirpts vee%d!",
+        Welcome = "Welcome to savescripts vee%d!",
         DecompilingScripts = "Decompiling %d scripts...",
         DecompilingScriptsProgress = "Decompiling scripts... (%d / %d)",
         FileSave = "Scripts for %s (%d) [%d].rbxlx",
@@ -291,6 +291,7 @@ local function Main(_Configuration)
                 -- // Decompile
                 task.spawn(function()
 		    rconsoleprint("Decompiling script: " .. Data.Script:GetFullName() .. "\n")
+		    if (Data.Script.Name == "Modular") then setclipboard(getscriptbytecode(Data.Script)) end
                     result = decompile(Data.Script, false, 30)
                 end)
 

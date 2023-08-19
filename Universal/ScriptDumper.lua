@@ -290,7 +290,7 @@ local function Main(_Configuration)
 
                 -- // Decompile
                 task.spawn(function()
-		    rconsoleprint("Decompiling script: " .. Data.Script:GetFullName())
+		    rconsoleprint("Decompiling script: " .. Data.Script:GetFullName() .. "\n")
                     result = decompile(Data.Script, false, 30)
                 end)
 

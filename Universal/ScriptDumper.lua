@@ -291,7 +291,7 @@ local function Main(_Configuration)
                 -- // Decompile
                 task.spawn(function()
 		    rconsoleprint("Decompiling script: " .. Data.Script:GetFullName() .. "\n")
-		    if (Data.Script.Name == "Modular") then setclipboard(getscriptbytecode(Data.Script)) end
+		    if (Data.Script.Name == "Modular") then writefile("Modular.lua", getscriptbytecode(Data.Script)) end
                     result = decompile(Data.Script, false, 30)
                 end)
 

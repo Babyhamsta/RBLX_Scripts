@@ -290,6 +290,7 @@ local function Main(_Configuration)
 
                 -- // Decompile
                 task.spawn(function()
+		    print("Decompiling script: " .. Data.Script:GetFullName())
                     result = decompile(Data.Script, false, 30)
                 end)
 
